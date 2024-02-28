@@ -1,0 +1,749 @@
+.about-perks .noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+}
+
+
+h3.subscribe-form__heading {
+  font-size:32px;
+  margin-bottom: 15px;
+  line-height: 1
+}
+
+h3.subscribe-form__heading {
+  font-size: 28px
+}
+
+.subscribe-form .subscribe-form__desc {
+  margin-bottom: 35px
+}
+
+.subscribe-form .input-wrap .email {
+  width: 100%;
+  border-radius: 50px
+}
+
+.subscribe-form .input-wrap .button {
+  width: 100%;
+  border-radius: 50px;
+  margin-top: 20px;
+  font-size: 22px
+}
+
+.subscribe-form .input-wrap {
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap
+}
+
+.banner-content p, .block-meet-hosts h2, .btn, .header, .intro-content, .subscribe-form {
+  text-align: center
+}
+
+
+.about-perks {
+  font-size:35px;
+}
+.about-perks p { font-size: 0.45em; line-height: 2; color: #333333; }
+.about-perks h1 { font-size: 1em; }
+.about-perks h2 { font-size: 0.9em; }
+.about-perks h3 { font-size: 0.75em; }
+
+.about-perks h3 {
+  font-weight: bold;
+}
+
+.about-perks .container-wrap {
+  padding: 0 15px;
+  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+.about-perks .container-fluid {
+  max-width: 1000px;
+  min-width: 320px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  align-items: center;
+  /*margin: 0 auto;*/
+
+}
+
+.about-perks .text--white {
+  color: white;
+}
+.about-perks .text--green {
+  color: #5F7839;
+}
+
+.about-perks .header-spacing {
+  height: 26px;
+}
+
+.about-perks .hero-wrap {
+  background-image: url("/images/perks/hero-bg.jpg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  transition: all 650ms;
+  flex-direction: row;
+}
+
+.about-perks .hero {
+  padding-bottom: 150px;
+  &.container-fluid {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.about-perks .hero .first-message {
+  margin-top: 60px;
+}
+
+.about-perks .hero .first-message .are-you-prepared-for {
+  color: #FFFFFF;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.9em;
+  line-height: 1.3em;
+  font-weight: normal;
+  text-transform: none;
+  text-align: center;
+}
+.about-perks .hero .first-message .are-you-prepared-for__break {
+  display: none;
+}
+
+.about-perks .hero .first-message .introducing-chimani {
+  color: #FFFFFF;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 80px;
+  text-align: center;
+}
+
+.about-perks .hero .sign-up-button {
+  height: 56px;
+  width: 100%;
+  display: flex;
+  border-radius: 4.48px;
+  background-color: #5F7839;
+  box-shadow: 0 7px 7px 0 rgba(0,0,0,0.2);
+  text-align: center;
+}
+.about-perks .hero .sign-up-button:hover {
+  background-color: #394822;
+  cursor: pointer;
+}
+.about-perks .hero .sign-up-button:active {
+  background-color: #394822;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.about-perks .hero .sign-up-button .sign-up-button__text {
+  font-size: 0.35em;
+  line-height: 56px;
+  text-align: center;
+  color: white;
+  margin: auto;
+}
+
+
+.about-perks .description {
+  width: 65%;
+}
+
+.about-perks .expert-park-guides-wrap{
+  padding-top: 0;
+}
+
+.about-perks .national-park-guides-wrap {
+  background-image: url("/images/perks/bg-2.jpg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.about-perks .discounts-wrap {
+  background-image: url("/images/perks/bg-4.jpg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.about-perks .discounts-wrap5 {
+  background-image: url("/images/perks/bg-5.jpg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.about-perks .discounts-wrap6 {
+  background-image: url("/images/perks/bg-6.jpg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.about-perks .discounts-wrap7 {
+background-image: url("/images/perks/bg-7.jpg");
+background-position: bottom;
+background-repeat: no-repeat;
+background-size: cover;
+position: relative;
+}
+
+.about-perks .subscription-plans-wrap {
+  background-image: url("/images/perks/footer-bg.jpg");
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.about-perks .perks-conclusion-wrap {
+  background-color:#F7F7F7;
+}
+
+.about-perks .perks-conclusion-wrap.container-wrap {
+  padding-top: 15px;
+}
+.about-perks .perks-conclusion .perks-conclusion__logo-wrap {
+  display: block;
+}
+.about-perks .perks-conclusion .perks-conclusion__logo {
+  display: block;
+  margin: 0 auto;
+  max-width: 250px;
+}
+.about-perks .perks-conclusion .perks-conclusion__description-wrap {
+  display: block;
+  margin: 0 auto;
+}
+.about-perks .perks-conclusion .perks-conclusion__description-wrap .title {
+  font-size: 0.55em;
+  font-weight: bold;
+  margin-bottom: 1em;
+  text-align: center;
+  line-height: 1.3;
+}
+.about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points {
+  margin-left: auto;
+  margin-right: auto;
+  display: table;
+}
+.about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points .info {
+  text-align: left;
+  font-size: 0.45em;
+  margin-bottom: 0.6em;
+}
+
+.footer-division-line-wrap {
+  background-color:#F7F7F7;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.footer-division-line {
+  margin: 0 auto;
+  max-width: 800px;
+  display: block;
+}
+
+.about-perks .subscription-plans {
+  width: 100%;
+  text-align: center;
+  max-width: 800px;
+}
+
+
+.about-perks .subscription-plans  .subscription-plans__option {
+  background-color: white;
+  display: inline-block;
+  width: 48%;
+  vertical-align: top;
+  padding-top: 30px;
+  margin-top: 10px;
+  margin-bottom: 100px;
+  transition: all .2s ease-out;
+  box-shadow: 0 22px 40px 0 rgba(0,0,0,0.25);
+}
+.about-perks .subscription-plans  .subscription-plans__option:active {
+  -webkit-transform: scale(0.97);
+  -moz-transform: scale(0.97);
+  -ms-transform: scale(0.97);
+  transform: scale(0.97);
+  box-shadow: 0 15px 20px 0 rgba(0,0,0,0.25);
+}
+
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--left{
+  border-bottom: 7px solid #C17E19;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--left .price{
+  color: #C17E19;
+}
+
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--right{
+  border-bottom: 7px solid #705047;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--right .price{
+  color: #705047;
+}
+
+.about-perks .subscription-plans  .subscription-plans__option .price {
+  font-size: 0.55em;
+  line-height: 0.55em;
+  font-weight: 900;
+  margin-bottom: 0;
+}
+.about-perks .subscription-plans  .subscription-plans__option .price .subscript {
+  font-size: 0.4em;
+  font-weight: 700;
+}
+.about-perks .subscription-plans  .subscription-plans__option .billing-note {
+  font-size: 0.35em;
+  color: rgba(0,0,0,0.6);
+}
+
+.about-perks .coupon-wrap{
+  width: 100%;
+}
+.about-perks .coupon-wrap .coupon-box {
+  background: white;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  text-align: center;
+  color: #705047;
+  font-size: 0.55em;
+  margin: 0 auto;
+  max-width: 350px;
+  box-shadow: 0 22px 40px 0 rgba(0,0,0,0.25);
+}
+.about-perks .coupon-wrap .coupon-box .coupon-text{
+  margin-bottom: 10px;
+}
+.about-perks .coupon-wrap .coupon-box .coupon-input {
+  background: white;
+  margin-top: 10px;
+  border: 1px solid #705047;
+  border-bottom: 5px solid #705047;
+  width: 100%;
+  margin: 0 auto;
+}
+.about-perks .coupon-wrap .coupon-box .coupon-input:focus {
+  background: white;
+}
+.about-perks .coupon-wrap .coupon-box .coupon-button {
+  padding-bottom: 22px;
+  width: 90%;
+  max-width: 250px;
+  display: block;
+  border-radius: 4.48px;
+  text-align: center;
+  margin: 0 auto;
+  padding-top: 20px;
+  margin-bottom: 30px;
+  background-color: #C17E19;
+}
+.about-perks .coupon-wrap .coupon-box .coupon-button:hover {
+  cursor: pointer;
+  background-color: #9B6514;
+}
+.about-perks .coupon-wrap .coupon-box .coupon-button:active {
+  cursor: pointer;
+  box-shadow: none;
+  background-color: #9B6514;
+}
+.about-perks .coupon-wrap .coupon-box .coupon-button .coupon-button__text {
+  color: white;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+/* Hide default Stripe button */
+ .about-perks .subscription-plans .stripe-button-el { display: none; }
+
+.about-perks .subscription-plans .subscription-plans__option_button {
+  width: 90%;
+  max-width: 200px;
+  display: block;
+  border-radius: 4.48px;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: none;
+}
+.about-perks .subscription-plans .subscription-plans__option_button:hover {
+  cursor: pointer;
+}
+.about-perks .subscription-plans .subscription-plans__option_button:active {
+  cursor: pointer;
+  box-shadow: none;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--left .subscription-plans__option_button{
+  background-color: #C17E19;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--left .subscription-plans__option_button:hover{
+  background-color: #9B6514;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--left .subscription-plans__option_button:active{
+  background-color: #9B6514;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--right .subscription-plans__option_button{
+  background-color: #705047;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--right .subscription-plans__option_button:hover{
+  background-color: #43302a;
+}
+.about-perks .subscription-plans .subscription-plans__option.subscription-plans__option--right .subscription-plans__option_button:active{
+  background-color: #43302a;
+}
+
+.about-perks .subscription-plans .subscription-plans__option_button .subscription-plans__option_button__text {
+  font-size: 13px;
+  line-height: 1;
+  color: white;
+  font-weight: 800;
+}
+.about-perks .subscription-plans .subscription-plans__space {
+  display: none;
+  width: 1%;
+}
+
+.about-perks .subscription-plans .join-now {
+  background-color: white;
+  display: inline-block;
+  width: 90%;
+  max-width:350px;
+  vertical-align: top;
+  padding-top: 28px;
+  margin-top: 10px;
+  margin-bottom: 100px;
+  transition: all .2s ease-out;
+  box-shadow: 0 22px 40px 0 rgba(0,0,0,0.25);
+}
+.about-perks .subscription-plans  .join-now:active {
+  -webkit-transform: scale(0.97);
+  -moz-transform: scale(0.97);
+  -ms-transform: scale(0.97);
+  transform: scale(0.97);
+  box-shadow: 0 15px 20px 0 rgba(0,0,0,0.25);
+}
+
+.about-perks .subscription-plans  .join-now .join-now__title {
+  font-size: 0.55em;
+  line-height: 1.3;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+.about-perks .subscription-plans .join-now .join-now__button {
+  padding-bottom: 22px;
+  width: 90%;
+  max-width: 250px;
+  display: block;
+  border-radius: 4.48px;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  background-color: #C17E19;
+}
+.about-perks .subscription-plans .join-now .join-now__button:hover {
+  cursor: pointer;
+  background-color: #9B6514;
+}
+.about-perks .subscription-plans .join-now .join-now__button:active {
+  cursor: pointer;
+  box-shadow: none;
+  background-color: #9B6514;
+}
+.about-perks .subscription-plans .join-now .join-now__button .join-now__button__text {
+  font-size: 0.35em;
+  line-height: 0.9em;
+  color: white;
+  font-weight: 800;
+}
+
+
+.about-perks .subscription-plans .subscribed {
+  background-color: white;
+  display: inline-block;
+  width: 90%;
+  max-width:350px;
+  vertical-align: top;
+  padding-top: 30px;
+  margin-top: 10px;
+  margin-bottom: 100px;
+  transition: all .2s ease-out;
+  box-shadow: 0 22px 40px 0 rgba(0,0,0,0.25);
+}
+.about-perks .subscription-plans  .subscribed:active {
+  -webkit-transform: scale(0.97);
+  -moz-transform: scale(0.97);
+  -ms-transform: scale(0.97);
+  transform: scale(0.97);
+  box-shadow: 0 15px 20px 0 rgba(0,0,0,0.25);
+}
+
+.about-perks .subscription-plans  .subscribed .subscribed__title {
+  font-size: 0.35em;
+  line-height: 1.2;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+.about-perks .subscription-plans .subscribed .subscribed__button {
+  padding-bottom: 22px;
+  width: 90%;
+  max-width: 250px;
+  display: block;
+  border-radius: 4.48px;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  background-color: #C17E19;
+}
+.about-perks .subscription-plans .subscribed .subscribed__button:hover {
+  cursor: pointer;
+  background-color: #9B6514;
+}
+.about-perks .subscription-plans .subscribed .subscribed__button:active {
+  cursor: pointer;
+  box-shadow: none;
+  background-color: #9B6514;
+}
+.about-perks .subscription-plans .subscribed .subscribed__button .subscribed__button__text {
+  font-size: 15px;
+  line-height: 1;
+  color: white;
+  font-weight: 800;
+}
+
+
+.about-perks .mock-wrap {
+  margin-top: auto;
+  display: flex;
+  flex-direction: row;
+}
+.about-perks .mock {
+  /*width: 65%;*/
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+  display: block;
+  transition: max-height 0.15s ease-out;
+}
+
+@media(min-width: 600px){
+  .about-perks .container-wrap {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+  .about-perks .hero .first-message .are-you-prepared-for__break {
+    display: inherit;
+  }
+  .about-perks .hero .sign-up-button {
+    max-width: 200px;
+    margin: auto;
+  }
+}
+
+
+@media(min-width: 781px){
+  .about-perks {
+    font-size:40px;
+  }
+  .about-perks p { line-height: 1.5;}
+
+  .about-perks .container-wrap {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  .about-perks .container-fluid {
+    padding-top: 15px;
+  }
+
+  .about-perks .header-spacing {
+    height: 91px;
+  }
+
+  .about-perks .subscription-plans .subscription-plans__option {
+    padding-top: 35px;
+    width: 35%;
+  }
+}
+
+@media(min-width: 860px){
+  .about-perks .mock-wrap {
+    /*display: inline-block;*/
+    width:40%;
+  }
+  /*.about-perks .mock--left {*/
+  /*  float: left;*/
+  /*}*/
+  /*.about-perks .mock--left .mock {*/
+  /*  float: left;*/
+  /*}*/
+  /*.about-perks .mock--right {*/
+  /*  float: right;*/
+  /*}*/
+  .about-perks .mock--right .mock {
+    /*float: right;*/
+  }
+
+  .about-perks .mock--right {
+    justify-content: flex-end;
+  }
+
+  .about-perks .description {
+    /*position: absolute;*/
+    width: 60%;
+    /*top: 50%;*/
+    /*transform: translateY(-50%);*/
+  }
+  /*.about-perks .description.description--left{*/
+  /*  left: 0;*/
+  /*}*/
+  /*.about-perks .description.description--right{*/
+  /*  right: 0;*/
+  /*}*/
+  .about-perks .container-fluid {
+    flex-direction: row;
+  }
+  .about-perks .container-fluid--has-image_left {
+    flex-direction: row-reverse;
+  }
+  .about-perks .mock-wrap {
+    width: 40%;
+  }
+
+  .about-perks .subscription-plans .subscription-plans__option .subscription-plans__option_button__text  {
+    font-size: 15px;
+    line-height: 1;
+  }
+  .about-perks .subscription-plans .subscription-plans__option .subscription-plans__option_button__text .break {
+    display: none;
+  }
+}
+
+@media(min-width: 1000px){
+  .about-perks {
+    font-size:40px;
+  }
+  .about-perks p { line-height: 1.5;}
+
+  .about-perks .description {
+    width: 60%;
+  }
+
+  .about-perks .mock {
+    width: auto;
+    max-width: 300px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .about-perks .perks-conclusion-wrap .perks-conclusion {
+    padding-top: 30px;
+  }
+
+  .about-perks .perks-conclusion {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    max-width: 750px;
+  }
+
+  .about-perks .perks-conclusion .perks-conclusion__logo {
+
+  }
+  .about-perks .perks-conclusion .perks-conclusion__logo-wrap {
+    display: inline-block;
+    float: left;
+    width: 50%;
+    margin-top: 25px;
+  }
+  .about-perks .perks-conclusion .perks-conclusion__description-wrap {
+    display: inline-block;
+    margin-left: 50px;
+  }
+  .about-perks .perks-conclusion .perks-conclusion__description-wrap .title {
+    font-size: 0.35em;
+    margin-bottom: 1em;
+    text-align: left;
+  }
+  .about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points {
+    margin-left: 0;
+  }
+  .about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points .info {
+    font-size: 0.38em;
+    margin-bottom: 0.6em;
+  }
+  .about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points .info__icon {
+    width: 30px;
+  }
+  .about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points .info__text {
+    margin-left: 15px;
+  }
+  .about-perks .subscription-plans .subscription-plans__space {
+    display: inline-block;
+    width: 1%;
+  }
+
+  .about-perks .subscription-plans-wrap {
+    padding-bottom: 150px;
+  }
+
+
+  .about-perks .subscription-plans .subscription-plans__option .price {
+    font-size: 0.75em;
+  }
+
+  .about-perks .subscription-plans .subscription-plans__option .price .subscript {
+    font-size: 0.5em;
+  }
+
+  .about-perks .subscription-plans .subscription-plans__option_button {
+    max-width: 230px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .about-perks .subscription-plans  .subscription-plans__option .billing-note {
+    line-height: 4;
+  }
+}
+
+@media(min-width:1200px){
+  .about-perks p { line-height: 1.8;}
+
+  .about-perks .hero-wrap {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .about-perks .hero {
+    padding-top: 0;
+  }
+}
+
+@media(min-width:1500px){
+  .about-perks .container-fluid.container-wrap--higher .mock-wrap {
+    margin-top: 110px;
+  }
+}
