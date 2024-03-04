@@ -51,6 +51,8 @@ export default function App() {
         <meta name="msapplication-square150x150logo" content="https://chimani-website.s3.amazonaws.com/images/touch/ms-tile-mediumtile.png" />
         <meta name="msapplication-wide310x150logo" content="https://chimani-website.s3.amazonaws.com/images/touch/ms-tile-widetile.png" />
         <meta name="msapplication-square310x310logo" content="https://chimani-website.s3.amazonaws.com/images/touch/ms-tile-largetile.png" />
+
+        <link href="/type/fontello.css" rel="stylesheet"/>
       </head>
       <body>
         <Outlet />

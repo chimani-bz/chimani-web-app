@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import "./basic.css";
+import "./footer.css";
 import "./index.css";
 export const meta: MetaFunction = () => {
   return [
@@ -7,6 +8,50 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Chimani Perks Subscription" },
   ];
 };
+
+function SubscriptionSection() {
+  return (
+    <section className="subscription-plans-wrap container-wrap">
+      <div className="subscription-plans container-fluid">
+        <div className="subscription-plans__space">
+          <div className="subscription-plans__option subscription-plans__option--left">
+            <p className="price price--left">$29.99<span className="subscript">/ year</span></p>
+            <p className="billing-note">(billed annually)</p>
+            <button type="button" data-target="#authentication-modal" data-toggle="modal"
+                    className="subscription-plans__option_button noselect">
+                  <span className="subscription-plans__option_button__text">
+                    SIGN UP <br className="break"/>
+                    FOR YEAR
+                  </span>
+            </button>
+          </div>
+
+          <div className="subscription-plans__option subscription-plans__option--right">
+            <p className="price price--right">$99.99<span className="subscript">/ lifetime</span></p>
+            <p className="billing-note">(billed once)</p>
+            <button type="button" data-target="#authentication-modal" data-toggle="modal"
+                    className="subscription-plans__option_button noselect">
+                      <span className="subscription-plans__option_button__text">
+                        SIGN UP <br className="break"/>
+                        FOR LIFETIME
+                      </span>
+            </button>
+          </div>
+        </div>
+        <div className="coupon-wrap">
+          <div className="coupon-box">
+            <div className="coupon-text">Coupon</div>
+            <button data-target="#authentication-modal" data-toggle="modal" className="coupon-button">
+                <span className="coupon-button__text">
+                  I HAVE A COUPON CODE
+                </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
 
 export default function Index() {
   return (
@@ -197,11 +242,36 @@ export default function Index() {
             </ul>
           </div>
         </div>
+
       </section>
+
+      <SubscriptionSection/>
 
       <div className="footer-division-line-wrap">
         <hr className="footer-division-line"/>
       </div>
+
+      <footer>
+          <p>©<span id="copyright">2010-2022</span> Chimani, Inc. All rights reserved. |&nbsp;
+            <a href="/privacy.html">Privacy Policy</a> | &nbsp;
+            <a href="/termsofservice.html">Terms of Service</a> |&nbsp;
+            <a href="mailto:info@chimani.com">info (at) chimani.com</a>
+          </p>
+          <ul className="social gray">
+            <li>
+              <a href="https://twitter.com/Chimani" title="Chimani on Twitter"><i className="icon-s-twitter"></i></a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/chimani" title="Chimani on Facebook"><i className="icon-s-facebook"></i></a>
+            </li>
+            <li>
+              <a href="https://instagram.com/chimani/" title="Chimani on Instagram"><i className="icon-s-instagram"></i></a>
+            </li>
+            <li>
+              <a href="#" data-toggle="modal" data-target="#subscribeModal" className="newsletter-link visible-sm" title="Subscribe to our newsletter" target="_blank"><i className="icon-newspaper"></i></a>
+            </li>
+          </ul>
+      </footer>
 
     </div>
   );

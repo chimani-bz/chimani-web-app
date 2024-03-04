@@ -7,7 +7,11 @@
               user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome and Opera */
 }
-
+.container-fluid {
+  padding-right: 20px;
+  padding-left: 20px;
+  *zoom: 1;
+}
 
 h3.subscribe-form__heading {
   font-size:32px;
@@ -95,6 +99,10 @@ h3.subscribe-form__heading {
   position: relative;
   transition: all 650ms;
   flex-direction: row;
+  /*padding: 0;*/
+  /*.container-fluid {*/
+  /*  padding: 0 40px;*/
+  /*}*/
 }
 
 .about-perks .hero {
@@ -156,10 +164,6 @@ h3.subscribe-form__heading {
   margin: auto;
 }
 
-
-.about-perks .description {
-  width: 65%;
-}
 
 .about-perks .expert-park-guides-wrap{
   padding-top: 0;
@@ -243,11 +247,16 @@ position: relative;
   margin-left: auto;
   margin-right: auto;
   display: table;
+  list-style: none;
+  box-sizing: border-box;
 }
 .about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points .info {
   text-align: left;
   font-size: 0.45em;
   margin-bottom: 0.6em;
+  .info__icon{
+    vertical-align: middle;
+  }
 }
 
 .footer-division-line-wrap {
@@ -262,16 +271,19 @@ position: relative;
   display: block;
 }
 
-.about-perks .subscription-plans {
+.about-perks .subscription-plans.subscription-plans {
   width: 100%;
   text-align: center;
   max-width: 800px;
+  display: flex;
+  flex-direction: column;
 }
 
 
 .about-perks .subscription-plans  .subscription-plans__option {
   background-color: white;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   width: 48%;
   vertical-align: top;
   padding-top: 30px;
@@ -348,6 +360,7 @@ position: relative;
 .about-perks .coupon-wrap .coupon-box .coupon-button {
   padding-bottom: 22px;
   width: 90%;
+  height: auto;
   max-width: 250px;
   display: block;
   border-radius: 4.48px;
@@ -376,17 +389,24 @@ position: relative;
 /* Hide default Stripe button */
  .about-perks .subscription-plans .stripe-button-el { display: none; }
 
+.about-perks .subscription-plans .subscription-plans__space {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
 .about-perks .subscription-plans .subscription-plans__option_button {
   width: 90%;
+  height: auto;
   max-width: 200px;
+  padding: 15px 0;
   display: block;
   border-radius: 4.48px;
   text-align: center;
   margin: 0 auto;
   margin-bottom: 30px;
-  padding-top: 10px;
-  padding-bottom: 10px;
   border: none;
+  font-size: 15px;
 }
 .about-perks .subscription-plans .subscription-plans__option_button:hover {
   cursor: pointer;
@@ -420,10 +440,7 @@ position: relative;
   color: white;
   font-weight: 800;
 }
-.about-perks .subscription-plans .subscription-plans__space {
-  display: none;
-  width: 1%;
-}
+
 
 .about-perks .subscription-plans .join-now {
   background-color: white;
@@ -548,6 +565,9 @@ position: relative;
 }
 
 @media(min-width: 600px){
+  .about-perks .description {
+    width: 65%;
+  }
   .about-perks .container-wrap {
     padding-left: 25px;
     padding-right: 25px;
@@ -591,18 +611,6 @@ position: relative;
     /*display: inline-block;*/
     width:40%;
   }
-  /*.about-perks .mock--left {*/
-  /*  float: left;*/
-  /*}*/
-  /*.about-perks .mock--left .mock {*/
-  /*  float: left;*/
-  /*}*/
-  /*.about-perks .mock--right {*/
-  /*  float: right;*/
-  /*}*/
-  .about-perks .mock--right .mock {
-    /*float: right;*/
-  }
 
   .about-perks .mock--right {
     justify-content: flex-end;
@@ -614,12 +622,7 @@ position: relative;
     /*top: 50%;*/
     /*transform: translateY(-50%);*/
   }
-  /*.about-perks .description.description--left{*/
-  /*  left: 0;*/
-  /*}*/
-  /*.about-perks .description.description--right{*/
-  /*  right: 0;*/
-  /*}*/
+
   .about-perks .container-fluid {
     flex-direction: row;
   }
@@ -636,6 +639,10 @@ position: relative;
   }
   .about-perks .subscription-plans .subscription-plans__option .subscription-plans__option_button__text .break {
     display: none;
+  }
+
+  .about-perks .hero-wrap.container-wrap {
+    padding: 0;
   }
 }
 
@@ -698,10 +705,7 @@ position: relative;
   .about-perks .perks-conclusion .perks-conclusion__description-wrap .info-points .info__text {
     margin-left: 15px;
   }
-  .about-perks .subscription-plans .subscription-plans__space {
-    display: inline-block;
-    width: 1%;
-  }
+
 
   .about-perks .subscription-plans-wrap {
     padding-bottom: 150px;
