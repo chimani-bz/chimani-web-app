@@ -25,6 +25,7 @@
     "cross-env": "^7.0.3",
     "express": "^4.18.2",
     "firebase": "^10.8.1",
+    "firebase-admin": "^12.0.0",
     "firebaseui": "^6.1.0",
     "isbot": "^4.1.0",
     "morgan": "^1.10.0",
