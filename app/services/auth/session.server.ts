@@ -1,40 +1,40 @@
 import {createCookieSessionStorage, redirect} from "@remix-run/node";
 import admin from 'firebase-admin';
 import {UserPersona} from "~/services/auth/models/BaseUser";
-// TODO
-// var serviceAccount = require("./service-account.json");
+import * as process from "process";
+
+const FIREBASE_USER_SESSION_TOKEN_NAME = 'firebase_user_session_token'
+if(!process.env.FIREBASE_SERVICE_ACCOUNT_KEY){
+  throw Error('Missing env var FIREBASE_SERVICE_ACCOUNT_KEY.')
+}
+const FIREBASE_SERVICE_ACCOUNT_KEY = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
+if(!process.env.FIREBASE_CLIENT_CONFIG){
+  throw Error('Missing env var FIREBASE_CLIENT_CONFIG.')
+}
+const FIREBASE_CLIENT_CONFIG = JSON.parse(process.env.FIREBASE_CLIENT_CONFIG)
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert({
-      "type": "service_account",
-      "project_id": "firecms-aa7a0",
-      "private_key_id": "e96e36194e5bc9ef5ebbb39dfe1b494319e5240c",
-      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCzhEaBDkFCx3qZ\nWydUWrVoQbX3yiGIvh9XsdM8xLj0Up6M+S39F7CeXtE5yAHblSI5OufanMwOzpT/\nN+Yv8IhcyS/+4SCGB3Q6Dn+8r649+O8wUFqCaMtjHw33wJX/JFKxqYE0dJfyliTN\n+mwhtGDEzq11ii2vJ7YD7Qiw+zZYoFybuclLxWYAS77GnVFW+hDPXYPn75gH3qL6\nRS0gWEW+IIUjhUrG08G7WbVxE60APTsKCtl2D3DutkJ0lojAaxyjxoMPdRCjPLwB\nq3sGo3ic2Hse8wMA4jbXv1u8E9yV9nXOvSOrPRWhFfPCpR49o0N5xPK9r4iRzynM\nA1cgKr1HAgMBAAECggEAAKlYnyofyHC2vXDuDKwG5hrz4jVe+UOGFwsjNaKd8dyK\nFAfpCPk43+SGjdl0VExQ43gZmZ8hS16sguJAWWXgAsOFB0HqHkRRw9MA2n+lOzo7\nG2j4ZGmhcjyPjx2pD9cg7OGshbZ2RuERwqaNFnS1NJR0ZC39rBsP2yTY9tn+IcZ3\n6awe3ABHgdYloKL7bMoWhuLXmb1NeXVnOS/GJizEgBhWGkLI7RNVW7CwknUWIjuc\navI/Wh35qHULSB4TMjwnLOAOYZfIrtsDK1lgyPU1X6tLBDnL4wR/MvFp0Mtu2Kof\nn8jIeM6KX+pcydpMq+lN6I4bx7q12n5IHzZn3mFKJQKBgQDw6mYAENIz8fqDEZSU\nfnnf9YWMdeC/kCcedEiy3jui1yzrB9i6fV0dz/nBcDYZ5aXXx3kIYQ0AdnRf8NCw\nQZ9Pa98j+lenw2gNhKlH6UreqbdwmEiRPd1wq3XThmfTf3dkzQEllv5dn/vwDOxJ\nxdihA2hjjYmkhsv8ML88Wjb+4wKBgQC+wbj8g2pxAW7z2oylxFiiTYbjN9u8oTAr\nYnpEQBSAEP8NjLATWZ52UAcpYSlFYeJ9s0nynfAggh0PZS78vPfjcwVPjcjYB+e8\namhZ+ubTUlsliYOiMNsz83S4OJavaTYlxnhohJihQpKkm6hfo88Q2wwrt1A0Y+md\ncmzUgfERTQKBgQCSiJ/d7l1MhyQuUKUk5QDQPhAq7Q/0tIN2vJfzY8S2OVby5eTn\nGZVnqrZo+A2QFuSWqJdvh0hXPbVvHZRxgJibwCsLQRvLyMkjX8tvF/EYGfafn6CT\n5yMngsK6FAhW1jMStra53Gt/Gu4shk+6V4J5/Q6jbtWHow2zqRrIZL8KrQKBgGBd\n1WobqaY1Jywh+HO14WD88WvQSD3e4ErKkSHxjWm1LGRX8ouT9q2meDe7UfIvJRCD\nhpP+ndSOZsfkQfyEKmbJMKGj6xbXx4Yz60upqPqQ3GL2OX2yWMrB7vEyBU3QRP6I\naUPD2Kd+zj5CNKk8Q9ssDdX34ZjV8KsNp1Uj3/jxAoGBAOG1u2lKxd7T11NSzpxi\nKABf8BC0AhIWBejjbG+6XasSGbpHBRLlONR7dJ1qhIIXWKB3h/jpDF2+xLXvUbBT\nkTkg5Xw5K3faGMag93v07PmiVfB2klEOoeOIFr36k3snPRsepHQvedDPFNpoa7c1\nrD3lEsjNj6eEcEf/y1dy7A9D\n-----END PRIVATE KEY-----\n",
-      "client_email": "firebase-adminsdk-hxv3i@firecms-aa7a0.iam.gserviceaccount.com",
-      "client_id": "117061730418627546331",
-      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-      "token_uri": "https://oauth2.googleapis.com/token",
-      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-hxv3i%40firecms-aa7a0.iam.gserviceaccount.com",
-      "universe_domain": "googleapis.com"
-    }),
+    credential: admin.credential.cert(FIREBASE_SERVICE_ACCOUNT_KEY),
   });
 }
+
 /**
  * setup the session cookie to be used for firebase
  */
+if(!process.env.SESSION_SECRET){
+  throw Error('Missing env var SESSION_SECRET.')
+}
 const { getSession, commitSession, destroySession } =
   createCookieSessionStorage({
     cookie: {
-      name: "fb:token",
+      name: "firebase:session_token",
       httpOnly: false,
       maxAge: 60 * 60 * 24 * 30,
       path: "/",
       sameSite: "lax",
       // TODO: Get from env var.
-      secrets: ["f3cr@z7"],
-      // TODO: Get from env var.
-      secure: false,
+      secrets: [process.env.SESSION_SECRET],
+      secure: !!process.env.SESSION_USE_TLS && process.env.SESSION_USE_TLS.toLowerCase() === 'true',
     },
   });
 
@@ -50,9 +50,10 @@ export const isSessionValid = async (request, redirectTo) => {
   try {
     // Verify the session cookie. In this case an additional check is added to detect
     // if the user's Firebase session was revoked, user deleted/disabled, etc.
+    const idToken = await getFirebaseIdTokenFromRemixSession(request)
     const decodedClaims = await admin
       .auth()
-      .verifySessionCookie(session.get("idToken"), true /** checkRevoked */);
+      .verifySessionCookie(idToken, true /** checkRevoked */);
     return {
       success: true,
       persona: UserPersona.Authenticated,
@@ -68,31 +69,27 @@ export const isSessionValid = async (request, redirectTo) => {
 };
 
 export const getChimaniUser = async (request) => {
-  if (!request.headers.get("cookie")){
+  const session = await getSession(request.headers.get("cookie"));
+  if (!session){
     return {
       persona: UserPersona.Anonymous
     }
   }
   try {
-    // const decodedClaims = await admin
-    //    .auth()
-    //    .verifySessionCookie(session.get("idToken"), true /** checkRevoked */);
-    const idToken = await getFirebaseIdTokenFromRemixSession(request)
-    if(idToken === null){
+    const token = session.get(FIREBASE_USER_SESSION_TOKEN_NAME);
+    if(token === null){
       return {
         persona: UserPersona.Anonymous
       }
     }
-    const result = await fetch(
-      // TODO: get from env var
-      "http://127.0.0.1:8000/api/web-app/auth/me", {
-        headers: {
-          'Authorization': `Basic ${idToken}`,
-        }
-      }
-    )
-    const chimaniUser = await result.json()
-    return chimaniUser ;
+    const decodedClaims = await admin
+       .auth()
+       .verifySessionCookie(token, true /** checkRevoked */);
+    return {
+      persona: UserPersona.Authenticated,
+      firebaseUid: decodedClaims.uid,
+      hasActiveSubscription: false
+    }
   } catch (error) {
     return {
       persona: UserPersona.Anonymous
@@ -113,7 +110,7 @@ export const getFirebaseIdTokenFromRemixSession = async (request) => {
     return null
   }
 
-  const idToken = remixSession.get("idToken")
+  const idToken = remixSession.get(FIREBASE_USER_SESSION_TOKEN_NAME)
   if(idToken === null || idToken === undefined){
     return null
   }
@@ -134,7 +131,7 @@ const setCookieAndRedirect = async (
   redirectTo = "/"
 ) => {
   const session = await getSession(request.headers.get("cookie"));
-  session.set("idToken", sessionCookie);
+  session.set(FIREBASE_USER_SESSION_TOKEN_NAME, sessionCookie);
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await commitSession(session),
@@ -151,6 +148,7 @@ const setCookieAndRedirect = async (
  * @returns
  */
 export const sessionLogin = async (request, idToken, redirectTo) => {
+  await admin.auth().verifyIdToken(idToken);
   return admin
     .auth()
     .createSessionCookie(idToken, {
@@ -181,7 +179,7 @@ export const sessionLogout = async (request) => {
   // if the user's Firebase session was revoked, user deleted/disabled, etc.
   return admin
     .auth()
-    .verifySessionCookie(session.get("idToken") , true /** checkRevoked */)
+    .verifySessionCookie(session.get(FIREBASE_USER_SESSION_TOKEN_NAME) , true /** checkRevoked */)
     .then((decodedClaims) => {
       return admin.auth().revokeRefreshTokens(decodedClaims?.sub);
     })

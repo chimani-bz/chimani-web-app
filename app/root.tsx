@@ -1,13 +1,29 @@
 import {cssBundleHref} from "@remix-run/css-bundle";
-import type {LinksFunction} from "@remix-run/node";
-import {Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration,} from "@remix-run/react";
+import type {LinksFunction, LoaderFunction} from "@remix-run/node";
+import {json, Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration,} from "@remix-run/react";
+import {useLoaderData} from "react-router";
 
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
 
+type LoaderType = {
+  ENV: {
+    FIREBASE_CLIENT_CONFIG: string
+  }
+}
+export const loader:LoaderFunction = () => {
+  return json({
+    ENV: {
+      FIREBASE_CLIENT_CONFIG: process.env.FIREBASE_CLIENT_CONFIG,
+    },
+  });
+}
+
 export default function App() {
+  const data = useLoaderData() as LoaderType;
+
   return (
     <html lang="en">
       <head>
@@ -47,10 +63,17 @@ export default function App() {
         <meta name="msapplication-square310x310logo" content="https://chimani-website.s3.amazonaws.com/images/touch/ms-tile-largetile.png" />
       </head>
       <body>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+        <Outlet/>
+        <ScrollRestoration/>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(
+              data.ENV
+            )}`,
+          }}
+        />
+        <Scripts/>
+        <LiveReload/>
       </body>
     </html>
   );

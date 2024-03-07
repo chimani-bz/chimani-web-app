@@ -1,5 +1,6 @@
-import {sessionLogout} from "~/fb.sessions.server";
+import {sessionLogout} from "~/services/auth/session.server";
+import type {ActionFunction} from "@remix-run/node";
 
-export async function action({ request }) {
+export const action:ActionFunction = async ({ request }) => {
   return await sessionLogout(request);
 }

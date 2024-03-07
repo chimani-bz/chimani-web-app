@@ -1,8 +1,8 @@
 import {BaseUser, UserPersona} from "./BaseUser"
 
 export type AuthenticatedUserData = {
-  firebase_uid: string
-  has_active_subscription: boolean
+  firebaseUid: string
+  hasActiveSubscription: boolean
 }
 export type AuthenticatedUser = BaseUser &
   AuthenticatedUserData & {

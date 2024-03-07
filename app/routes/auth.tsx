@@ -6,9 +6,9 @@ import {faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import {useActionData} from "react-router";
 import {Form, useFetcher, useSearchParams} from "@remix-run/react";
 import {GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut} from "@firebase/auth";
-import {firebaseAuth} from "~/services/auth/firebase-app";
+import {firebaseAuth} from "~/services/auth/firebase-app.client";
 import {useRef, useState} from "react";
-import {sessionLogin} from "~/fb.sessions.server";
+import {sessionLogin} from "~/services/auth/session.server";
 
 type ActionDto = {
   idToken: string

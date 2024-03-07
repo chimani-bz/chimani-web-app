@@ -3,10 +3,10 @@ import stylesBasic from "./basic.css";
 import "./footer.css";
 import "./index.css";
 import React from "react";
-import {getChimaniUser} from "~/fb.sessions.server";
 import {ChimaniUser, isAnonymousUser, isAuthenticatedUser} from "../../services/auth/models/ChimaniUser";
 import {useLoaderData} from "react-router";
 import {Form, Link} from "@remix-run/react";
+import {getChimaniUser} from "~/services/auth/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesBasic},
@@ -29,7 +29,7 @@ export const meta: MetaFunction = () => {
 };
 
 const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
-  if(isAuthenticatedUser(user) && user.has_active_subscription){
+  if(isAuthenticatedUser(user) && user.hasActiveSubscription){
     return (
       <section className="subscription-plans-wrap container-wrap">
         <div className="subscription-plans container-fluid">
@@ -78,16 +78,6 @@ const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
             </Link>
           </div>
         </div>
-        {/*<div className="coupon-wrap">*/}
-        {/*  <div className="coupon-box">*/}
-        {/*    <div className="coupon-text">Coupon</div>*/}
-        {/*    <button data-target="#authentication-modal" data-toggle="modal" className="coupon-button">*/}
-        {/*        <span className="coupon-button__text">*/}
-        {/*          I HAVE A COUPON CODE*/}
-        {/*        </span>*/}
-        {/*    </button>*/}
-        {/*  </div>*/}
-        {/*</div>*/}
       </div>
     </section>
   )
@@ -335,7 +325,6 @@ export default function Index() {
             </li>
           </ul>
       </footer>
-
     </div>
     </>
   );

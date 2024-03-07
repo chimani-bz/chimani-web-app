@@ -1,6 +1,6 @@
 import {json, Outlet} from "@remix-run/react";
-import {getFirebaseIdTokenFromRemixSession, isSessionValid} from "~/fb.sessions.server";
 import {useLoaderData} from "react-router";
+import {getFirebaseIdTokenFromRemixSession, isSessionValid} from "~/services/auth/session.server";
 
 export async function loader({ request }) {
   const { decodedClaims, error } = await isSessionValid(request, "/login");
