@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
-import {User} from "~/services/auth/models/User";
+import {ChimaniUser} from "~/services/auth/models/ChimaniUser";
 import {AnonymousUserInstance} from "~/services/auth/models/AnonymousUser";
 import {onAuthStateChanged} from "@firebase/auth";
 import {firebaseAuth} from "~/services/auth/firebase-app";
@@ -9,7 +9,7 @@ type AuthContextType = {
   isAuthInitializing: boolean,
   isAuthenticated: boolean,
   logout: () => void,
-  user: User
+  user: ChimaniUser
 }
 
 
@@ -34,7 +34,7 @@ export const AuthProvider = ({
 }: AuthProviderInterface) => {
   const [isAuthInitializing, setIsAuthInitializing] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User>(AnonymousUserInstance)
+  const [user, setUser] = useState<ChimaniUser>(AnonymousUserInstance)
 
   const refreshAuth = useCallback(
     () => {

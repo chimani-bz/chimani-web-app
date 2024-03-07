@@ -1,10 +1,9 @@
 // app/sessions.js
-import { redirect, createCookieSessionStorage } from "@remix-run/node"; // or "@remix-run/cloudflare"
-
+import {createCookieSessionStorage, redirect} from "@remix-run/node"; // or "@remix-run/cloudflare"
 // Initialize Firebase
 // ---------------------
 import admin from 'firebase-admin';
-import {id} from "@remix-run/dev/dist/vite/vmod.js";
+import {UserPersona} from "~/services/auth/models/BaseUser";
 // TODO
 // var serviceAccount = require("./service-account.json");
 if (!admin.apps.length) {
@@ -60,13 +59,41 @@ export const isSessionValid = async (request, redirectTo) => {
     const decodedClaims = await admin
       .auth()
       .verifySessionCookie(session.get("idToken"), true /** checkRevoked */);
-    return { success: true, decodedClaims };
+    return {
+      success: true,
+      persona: UserPersona.Authenticated,
+      decodedClaims
+    };
   } catch (error) {
     // Session cookie is unavailable or invalid. Force user to login.
     // return { error: error?.message };
     throw redirect(redirectTo, {
       statusText: error?.message,
     });
+  }
+};
+
+export const getChimaniUser = async (request) => {
+  if (!request.headers.get("cookie")){
+    return {
+      persona: UserPersona.Anonymous
+    }
+  }
+  const session = await getSession(request.headers.get("cookie"));
+  try {
+    // Verify the session cookie. In this case an additional check is added to detect
+    // if the user's Firebase session was revoked, user deleted/disabled, etc.
+    const decodedClaims = await admin
+      .auth()
+      .verifySessionCookie(session.get("idToken"), true /** checkRevoked */);
+    return {
+      success: true,
+      persona: UserPersona.Authenticated
+    };
+  } catch (error) {
+    return {
+      persona: UserPersona.Anonymous
+    }
   }
 };
 
@@ -112,14 +139,6 @@ const setCookieAndRedirect = async (
  * @returns
  */
 export const sessionLogin = async (request, idToken, redirectTo) => {
-  console.log('INSIDE sessionLogin')
-  console.log('idToken:')
-  console.log(idToken)
-  const token = await admin.auth().verifyIdToken(idToken);
-  console.log('token:')
-  console.log(token)
-  console.log("idtoken verified", idToken)
-
   return admin
     .auth()
     .createSessionCookie(idToken, {
@@ -155,14 +174,14 @@ export const sessionLogout = async (request) => {
       return admin.auth().revokeRefreshTokens(decodedClaims?.sub);
     })
     .then(async () => {
-      return redirect("/login", {
+      return redirect("/auth", {
         headers: {
           "Set-Cookie": await destroySession(session),
         },
       });
     })
     .catch((error) => {
-      return redirect("/login");
+      return redirect("/auth");
       // console.log(error);
       // Session cookie is unavailable or invalid. Force user to login.
       // return { error: error?.message };

@@ -1,6 +1,6 @@
 import {json, Outlet} from "@remix-run/react";
 import {useAuth} from "~/services/auth/authContext";
-import {isAuthenticatedUser} from "~/services/auth/models/User";
+import {isAuthenticatedUser} from "~/services/auth/models/ChimaniUser";
 import {getFirebaseIdTokenFromRemixSession, getRemixSession, isSessionValid} from "~/fb.sessions.server";
 import {useLoaderData} from "react-router";
 import {getSession} from "@remix-run/dev/dist/vite/profiler";

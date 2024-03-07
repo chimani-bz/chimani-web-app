@@ -1,56 +1,69 @@
-import type {LinksFunction} from "@remix-run/node";
+import type {ActionFunction, LinksFunction, LoaderFunction} from "@remix-run/node";
 import stylesIndex from "./auth.css";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFacebookF, faGoogle} from "@fortawesome/free-brands-svg-icons";
 import {faEnvelope} from "@fortawesome/free-solid-svg-icons";
-import {useActionData} from "react-router";
-import {Form, useFetcher} from "@remix-run/react";
-import {getIdToken, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut} from "@firebase/auth";
+import {useActionData, useParams} from "react-router";
+import {Form, useFetcher, useSearchParams} from "@remix-run/react";
+import {
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut
+} from "@firebase/auth";
 import {firebaseAuth} from "~/services/auth/firebase-app";
+import {useRef, useState} from "react";
 import {sessionLogin} from "~/fb.sessions.server";
-import {useRef} from "react";
 
+type ActionDto = {
+  idToken: string
+  provider: string
+}
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesIndex},
 ];
+
 // use loader to check for existing session, if found, send the user to the blogs site
-export async function loader({ request }) {
+export const  loader:LoaderFunction = async ({ request }) => {
   return {};
 }
 
 // our action function will be launched when the submit button is clicked
 // this will sign in our firebase user and create our session and cookie using user.getIDToken()
-export const action = async ({ request }) => {
-  console.log('action called')
+export const action:ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-
   try {
     // TODO Validation error appears:
     // `First argument to verifyIdToken() must be a Firebase ID token string.`
     return await sessionLogin(request, formData.get("idToken"), "/");
   } catch (error) {
+    console.log('INSIDE action error')
     return { error: { message: error?.message } };
   }
 };
 
 export default function Index() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const actionData = useActionData();
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<ActionDto>();
+  const [validationMessage, setValidationMessage] = useState('')
 
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   const signInWithGoogle = async () => {
     await signOut(firebaseAuth);
     const provider = new GoogleAuthProvider();
     signInWithPopup(firebaseAuth, provider)
       .then(async (res) => {
-        // const idToken = await res.user.getIdToken();
-        const idToken = await getIdToken(res.user);
-        console.log('getIdToken:')
-        console.log(getIdToken)
+        const idToken = await res.user.getIdToken();
+        // const idToken = await getIdToken(res.user);
         fetcher.submit(
-          { idToken: idToken, "google-login": true },
+          {
+            idToken: idToken,
+            provider: res.user.providerId
+          },
           { method: "post" }
         );
       })
@@ -58,32 +71,32 @@ export default function Index() {
         console.log("signInWithGoogle", err);
       });
   };
-  // const provider = new GoogleAuthProvider();
-  // const authenticateWithGoogle =  () => {
-  //   signInWithPopup(firebaseAuth, provider)
-  //     .then((result) => {
-  //       // This gives you a Google Access Token. You can use it to access the Google API.
-  //       const credential = GoogleAuthProvider.credentialFromResult(result);
-  //       const token = credential.accessToken;
-  //       // The signed-in user info.
-  //       const user = result.user;
-  //       // IdP data available using getAdditionalUserInfo(result)
-  //       // ...
-  //       console.log(user)
-  //     }).catch((error) => {
-  //     // Handle Errors here.
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // The email of the user's account used.
-  //     const email = error.customData.email;
-  //     // The AuthCredential type that was used.
-  //     const credential = GoogleAuthProvider.credentialFromError(error);
-  //     console.log(errorCode)
-  //     // ...
-  //   });
-  // }
+
+  const signInWithFacebook = async () => {
+    await signOut(firebaseAuth);
+    const provider = new FacebookAuthProvider();
+    signInWithPopup(firebaseAuth, provider)
+      .then(async (res) => {
+        const idToken = await res.user.getIdToken();
+        // const idToken = await getIdToken(res.user);
+        fetcher.submit(
+          {
+            idToken: idToken,
+            provider: res.user.providerId
+          },
+          { method: "post" }
+        );
+      })
+      .catch((err) => {
+        console.log("signInWithFacebook", err);
+      });
+  };
 
   const signInWithEmail = async () => {
+    if(emailRef.current === null || passwordRef.current === null){
+      return;
+    }
+
     try {
       await signOut(firebaseAuth);
       const authResp = await signInWithEmailAndPassword(
@@ -92,19 +105,36 @@ export default function Index() {
         passwordRef.current.value
       );
 
-      // if signin was successful then we have a user
       if (authResp.user) {
-        const idToken = await firebaseAuth.currentUser.getIdToken();
+        console.log('INSIDE if authResp.user')
+        const idToken = await authResp.user.getIdToken();
         fetcher.submit(
-          { idToken: idToken, "email-login": true },
+          {
+            idToken: idToken,
+            provider: authResp.user.providerId
+          },
           { method: "post" }
         );
       }
     } catch (err) {
       console.log("signInWithEmail", err);
+      if(!err.code) {
+        if(err.code === 'auth/invalid-credential') {
+          setValidationMessage("Invalid credentials. Please check your email and password are correct.")
+        } else if(err.code === 'auth/too-many-requests') {
+          setValidationMessage("Your login was disabled because you had too many unsuccessful attempts to log in. To continue please reset your password or try again a bit later.")
+        }
+      }
     }
   };
-
+  const selectedPlanLabel = (()=>{
+    const plan = searchParams.get('plan');
+    switch (plan){
+      case 'annual': return <h3 className="plan-name">Annual plan checkout</h3>
+      case 'lifetime': return <h3 className="plan-name">Lifetime plan checkout</h3>
+      default: return <></>
+    }
+  })()
   return (
     <main className="main-wrap">
       <Form method="post" className="form-signin-wrapper w-100 m-auto">
@@ -115,19 +145,22 @@ export default function Index() {
                  alt="Chimani logo"/>
           </div>
 
+          {selectedPlanLabel}
           <h1 className="h3 mb-3 fw-normal text-center">Sign in to Continue</h1>
 
-          {/*<button className="btn btn-primary w-100 py-2" type="submit">Sign in</button>*/}
           <ul className="auth-methods">
             <li className="py-1">
-              <button className="btn btn-facebook w-100">
+              <button className="btn btn-facebook w-100"
+                type="button"
+                onClick={() => signInWithFacebook()}>
                 <FontAwesomeIcon icon={faFacebookF}/>
                 <span> Sign in with Facebook</span>
               </button>
             </li>
             <li className="py-1">
               <button className="btn btn-google w-100 py-2"
-                      onClick={() => signInWithGoogle()}>
+                  type="button"
+                  onClick={() => signInWithGoogle()}>
                 <FontAwesomeIcon icon={faGoogle}/>
                 <span> Sign in with Google</span>
               </button>
@@ -145,18 +178,32 @@ export default function Index() {
             </div>
             <div className="py-1">
               <button className="btn btn-primary w-100 py-2"
+                      type="button"
               onClick={() => signInWithEmail()}>
-                <FontAwesomeIcon icon={faEnvelope} className="mr-2"/>
-                <span> Sign in with email</span>
+                <FontAwesomeIcon icon={faEnvelope}/>
+                <span>Sign in with email</span>
               </button>
             </div>
           </div>
 
           <div className="errors">
             {actionData?.error ? actionData?.error?.message : null}
+            {validationMessage}
           </div>
 
-          <p className="mt-5 mb-3 text-body-secondary text-center">© 2010–{new Date().getFullYear()}</p>
+          <div className="footer">
+            <div className="mt-5 text-body-secondary text-center">
+              ©2010–{new Date().getFullYear()}<br/>
+              Chimani, Inc.
+            </div>
+            <div className="footer-link">
+              <ul className="footer-link__list">
+                <li><a href="https://www.chimani.com/privacy.html"> Privacy Policy </a></li>
+                <li><a href="https://www.chimani.com/termsofservice.html"> Terms of Service </a></li>
+                <li><a href="mailto:info@chimani.com"> info@chimani.com </a></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </Form>
     </main>

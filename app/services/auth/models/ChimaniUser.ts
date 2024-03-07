@@ -2,7 +2,7 @@ import { BaseUser, UserPersona } from "./BaseUser"
 import { AuthenticatedUser } from "./AuthenticatedUser"
 import { AnonymousUser } from "./AnonymousUser"
 
-export type User = AnonymousUser | AuthenticatedUser
+export type ChimaniUser = AnonymousUser | AuthenticatedUser
 
 export function isAnonymousUser(user: BaseUser): user is AnonymousUser {
   return user.persona === UserPersona.Anonymous

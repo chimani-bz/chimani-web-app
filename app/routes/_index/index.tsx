@@ -1,14 +1,25 @@
-import type {LinksFunction, MetaFunction} from "@remix-run/node";
+import type {LinksFunction, LoaderFunction, MetaFunction} from "@remix-run/node";
 import stylesBasic from "./basic.css";
 import "./footer.css";
 import "./index.css";
 import React from "react";
+import {getChimaniUser, getFirebaseSessionIfExists} from "~/fb.sessions.server";
+import {ChimaniUser, isAnonymousUser, isAuthenticatedUser} from "../../services/auth/models/ChimaniUser";
+import {useLoaderData} from "react-router";
+import {Form, Link} from "@remix-run/react";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesBasic},
   { rel: "stylesheet", href: '/type/fontello.css'},
 ];
 
+// use loader to check for existing session, if found, send the user to the blogs site
+export const  loader:LoaderFunction = async ({ request }) => {
+  const user = await getChimaniUser(request);
+  return {
+    user: user
+  };
+}
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,7 +28,26 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-function SubscriptionSection() {
+const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
+  if(isAuthenticatedUser(user)){
+    return (
+      <section className="subscription-plans-wrap container-wrap">
+        <div className="subscription-plans container-fluid">
+          <div className="subscription-plans__space">
+            <div className="subscription-plans__option subscription-plans__option--left">
+              <h4 style={{fontSize: '18px', fontWeight: '700'}}>You have an active subscription.</h4>
+              <Link to={'/'} className="subscription-plans__option_button noselect">
+                <span className="subscription-plans__option_button__text">
+                  Manage subscription
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="subscription-plans-wrap container-wrap">
       <div className="subscription-plans container-fluid">
@@ -25,45 +55,70 @@ function SubscriptionSection() {
           <div className="subscription-plans__option subscription-plans__option--left">
             <p className="price price--left">$29.99<span className="subscript">/ year</span></p>
             <p className="billing-note">(billed annually)</p>
-            <button type="button" data-target="#authentication-modal" data-toggle="modal"
-                    className="subscription-plans__option_button noselect">
-                  <span className="subscription-plans__option_button__text">
-                    SIGN UP <br className="break"/>
-                    FOR YEAR
-                  </span>
-            </button>
+            <Link
+              to={`/auth?plan=annual`}
+              className="subscription-plans__option_button noselect">
+                <span className="subscription-plans__option_button__text">
+                  SIGN UP <br className="break"/>
+                  FOR YEAR
+                </span>
+            </Link>
           </div>
 
           <div className="subscription-plans__option subscription-plans__option--right">
             <p className="price price--right">$99.99<span className="subscript">/ lifetime</span></p>
             <p className="billing-note">(billed once)</p>
-            <button type="button" data-target="#authentication-modal" data-toggle="modal"
-                    className="subscription-plans__option_button noselect">
-                      <span className="subscription-plans__option_button__text">
-                        SIGN UP <br className="break"/>
-                        FOR LIFETIME
-                      </span>
-            </button>
-          </div>
-        </div>
-        <div className="coupon-wrap">
-          <div className="coupon-box">
-            <div className="coupon-text">Coupon</div>
-            <button data-target="#authentication-modal" data-toggle="modal" className="coupon-button">
-                <span className="coupon-button__text">
-                  I HAVE A COUPON CODE
+            <Link
+              to={`/auth?plan=lifetime`}
+              className="subscription-plans__option_button noselect">
+                <span className="subscription-plans__option_button__text">
+                  SIGN UP <br className="break"/>
+                  FOR LIFETIME
                 </span>
-            </button>
+            </Link>
           </div>
         </div>
+        {/*<div className="coupon-wrap">*/}
+        {/*  <div className="coupon-box">*/}
+        {/*    <div className="coupon-text">Coupon</div>*/}
+        {/*    <button data-target="#authentication-modal" data-toggle="modal" className="coupon-button">*/}
+        {/*        <span className="coupon-button__text">*/}
+        {/*          I HAVE A COUPON CODE*/}
+        {/*        </span>*/}
+        {/*    </button>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
       </div>
     </section>
   )
 }
 
 export default function Index() {
+  const {user} = useLoaderData() as {user:ChimaniUser};
+
   return (
-    <div className="about-perks">
+    <>
+      <Form
+        method="post"
+        action="/logout"
+        style={{display:'flex', flexDirection: 'row', justifyContent: 'center'}}>
+        <b>Used for dev: </b>
+        Persona: {user.persona}
+        {isAnonymousUser(user) &&
+          <Link
+            to={`/auth`} style={{padding: '5px', height: '30px'}}>
+            Login
+          </Link>
+        }
+        {isAuthenticatedUser(user) &&
+          <button type="submit"
+            style={{padding: '5px', height: '30px'}}>
+            Logout
+          </button>
+        }
+      </Form>
+      <div className="about-perks">
+
       <section className="hero-wrap container-wrap">
         <div className="hero container-fluid">
           <div className="first-message">
@@ -253,7 +308,7 @@ export default function Index() {
 
       </section>
 
-      <SubscriptionSection/>
+      <SubscriptionSection user={user}/>
 
       <div className="footer-division-line-wrap">
         <hr className="footer-division-line"/>
@@ -282,5 +337,6 @@ export default function Index() {
       </footer>
 
     </div>
+    </>
   );
 };

@@ -1,95 +1,84 @@
 .about-perk-footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    padding: 3rem 0;
-    p {
-        font-size: 15px !important;
-    }
-
-    .social.gray {
-        margin: 20px 0 0 0;
-        padding: 0;
-        font-size: 0;
-    }
-
-    .social.gray li {
-        display: inline-block;
-        font-family: 'fontello-social';
-        margin: 0 15px;
-        line-height: 1;
-        font-size: 22px;
-    }
-
-    .social.gray a {
-        -webkit-transform: translateZ() !important;
-        -webkit-backface-visibility: hidden !important;
-        -webkit-perspective: 1000 !important;
-    }
-
-    .social.gray a i {
-        color: #b2b2b2;
-        display: inline-block;
-        -webkit-transition: all 200ms ease-in;
-        -o-transition: all 200ms ease-in;
-        -moz-transition: all 200ms ease-in;
-        height: auto;
-        width: auto;
-    }
-
-    .social.color {
-        height: 30px;
-        margin: 0;
-        padding: 0;
-        font-size: 0;
-    }
-
-    .social.color li {
-        display: inline-block;
-        font-family: 'fontello-social';
-        margin: 0 2px;
-    }
-
-    .social.color li a i {
-        text-align: center;
-        vertical-align: middle;
-        color: #FFF;
-        width: 30px;
-        height: 30px;
-        font-size: 15px;
-        -webkit-border-radius: 50%;
-        border-radius: 50%;
-        line-height: 30px;
-        display: inline-block;
-        -webkit-transition: all 200ms ease-in;
-        -o-transition: all 200ms ease-in;
-        -moz-transition: all 200ms ease-in;
-        opacity: 1;
-    }
-
-    a {
-        color: #D46700;
-    }
-
-    a:hover .icon-s-facebook {
-        color: #4470cf !important
-    }
-
-    a:hover .icon-s-instagram {
-        color: #a4765c !important
-    }
-
-    a:hover .icon-s-twitter {
-        color: #5daed5 !important
-    }
-
-    a:hover .icon-newspaper {
-        color: #9864ae !important
-    }
-
-    .social.color a:hover i {
-        color: #fff !important;
-        opacity: 0.75
-    }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 0;
 }
+.about-perk-footer p {
+  font-size: 15px !important;
+}
+.about-perk-footer .social.gray {
+  margin: 20px 0 0 0;
+  padding: 0;
+  font-size: 0;
+}
+.about-perk-footer .social.gray li {
+  display: inline-block;
+  font-family: "fontello-social";
+  margin: 0 15px;
+  line-height: 1;
+  font-size: 22px;
+}
+.about-perk-footer .social.gray a {
+  -webkit-transform: translateZ() !important;
+  -webkit-backface-visibility: hidden !important;
+  -webkit-perspective: 1000 !important;
+}
+.about-perk-footer .social.gray a i {
+  color: #b2b2b2;
+  display: inline-block;
+  -webkit-transition: all 200ms ease-in;
+  -o-transition: all 200ms ease-in;
+  -moz-transition: all 200ms ease-in;
+  height: auto;
+  width: auto;
+}
+.about-perk-footer .social.color {
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+}
+.about-perk-footer .social.color li {
+  display: inline-block;
+  font-family: "fontello-social";
+  margin: 0 2px;
+}
+.about-perk-footer .social.color li a i {
+  text-align: center;
+  vertical-align: middle;
+  color: #FFF;
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  line-height: 30px;
+  display: inline-block;
+  -webkit-transition: all 200ms ease-in;
+  -o-transition: all 200ms ease-in;
+  -moz-transition: all 200ms ease-in;
+  opacity: 1;
+}
+.about-perk-footer a {
+  color: #D46700;
+}
+.about-perk-footer a:hover .icon-s-facebook {
+  color: #4470cf !important;
+}
+.about-perk-footer a:hover .icon-s-instagram {
+  color: #a4765c !important;
+}
+.about-perk-footer a:hover .icon-s-twitter {
+  color: #5daed5 !important;
+}
+.about-perk-footer a:hover .icon-newspaper {
+  color: #9864ae !important;
+}
+.about-perk-footer .social.color a:hover i {
+  color: #fff !important;
+  opacity: 0.75;
+}
+
+/*# sourceMappingURL=footer.css.map */

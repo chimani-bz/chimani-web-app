@@ -11923,6 +11923,11 @@ body {
   max-width: 100px;
 }
 
+.plan-name {
+  font-size: 1rem;
+  text-align: center;
+}
+
 .auth-methods {
   list-style: none;
   padding: 0;
@@ -11960,6 +11965,18 @@ body {
   --bs-btn-disabled-color: #000;
   --bs-btn-disabled-bg: #dd4b39;
   --bs-btn-disabled-border-color: #cd3623;
+}
+
+.footer {
+  font-size: 0.8rem;
+}
+.footer .footer-link__list {
+  list-style: none;
+  padding: 0;
+}
+.footer .footer-link__list > li {
+  display: inline-block;
+  margin: 0.5rem;
 }
 
 /*# sourceMappingURL=auth.css.map */

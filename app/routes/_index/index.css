@@ -407,6 +407,7 @@ position: relative;
   margin-bottom: 30px;
   border: none;
   font-size: 15px;
+  text-decoration: none;
 }
 .about-perks .subscription-plans .subscription-plans__option_button:hover {
   cursor: pointer;

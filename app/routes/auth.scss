@@ -47,6 +47,10 @@ body {
 .logo-image {
   max-width: 100px;
 }
+.plan-name {
+  font-size: 1rem;
+  text-align: center;
+}
 
 .auth-methods {
   list-style: none;
@@ -61,5 +65,19 @@ body {
   .btn-google {
     color: white;
     @include button-variant($google-color, darken($google-color, 7.5%), darken($google-color, 10%), lighten($google-color,5%), lighten($google-color, 10%), darken($google-color,30%));
+  }
+}
+
+.footer {
+  font-size: .8rem;
+  .footer-link {
+    &__list {
+      list-style: none;
+      padding: 0;
+      > li {
+        display: inline-block;
+        margin: .5rem;
+      }
+    }
   }
 }
