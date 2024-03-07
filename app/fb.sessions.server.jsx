@@ -1,7 +1,4 @@
-// app/sessions.js
-import {createCookieSessionStorage, redirect} from "@remix-run/node"; // or "@remix-run/cloudflare"
-// Initialize Firebase
-// ---------------------
+import {createCookieSessionStorage, redirect} from "@remix-run/node";
 import admin from 'firebase-admin';
 import {UserPersona} from "~/services/auth/models/BaseUser";
 // TODO
@@ -30,16 +27,13 @@ const { getSession, commitSession, destroySession } =
   createCookieSessionStorage({
     cookie: {
       name: "fb:token",
-      // expires: new Date(Date.now() + 600),
-      // TODO
       httpOnly: false,
-      // maxAge: 600,
       maxAge: 60 * 60 * 24 * 30,
       path: "/",
       sameSite: "lax",
-      // TODO
+      // TODO: Get from env var.
       secrets: ["f3cr@z7"],
-      // TODO
+      // TODO: Get from env var.
       secure: false,
     },
   });
@@ -79,17 +73,26 @@ export const getChimaniUser = async (request) => {
       persona: UserPersona.Anonymous
     }
   }
-  const session = await getSession(request.headers.get("cookie"));
   try {
-    // Verify the session cookie. In this case an additional check is added to detect
-    // if the user's Firebase session was revoked, user deleted/disabled, etc.
-    const decodedClaims = await admin
-      .auth()
-      .verifySessionCookie(session.get("idToken"), true /** checkRevoked */);
-    return {
-      success: true,
-      persona: UserPersona.Authenticated
-    };
+    // const decodedClaims = await admin
+    //    .auth()
+    //    .verifySessionCookie(session.get("idToken"), true /** checkRevoked */);
+    const idToken = await getFirebaseIdTokenFromRemixSession(request)
+    if(idToken === null){
+      return {
+        persona: UserPersona.Anonymous
+      }
+    }
+    const result = await fetch(
+      // TODO: get from env var
+      "http://127.0.0.1:8000/api/web-app/auth/me", {
+        headers: {
+          'Authorization': `Basic ${idToken}`,
+        }
+      }
+    )
+    const chimaniUser = await result.json()
+    return chimaniUser ;
   } catch (error) {
     return {
       persona: UserPersona.Anonymous
@@ -98,13 +101,22 @@ export const getChimaniUser = async (request) => {
 };
 
 export const getRemixSession = async (request) => {
-  return await getSession(request.headers.get("cookie"));
+  const cookie = request.headers.get("cookie")
+  if (cookie === null){
+    return null
+  }
+  return await getSession(cookie);
 }
 export const getFirebaseIdTokenFromRemixSession = async (request) => {
   const remixSession = await getRemixSession(request)
-  console.log('remixSession:')
-  console.log(remixSession.get('idToken'))
+  if (remixSession === null) {
+    return null
+  }
+
   const idToken = remixSession.get("idToken")
+  if(idToken === null || idToken === undefined){
+    return null
+  }
   return idToken
 }
 

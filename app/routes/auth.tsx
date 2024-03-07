@@ -1,17 +1,11 @@
 import type {ActionFunction, LinksFunction, LoaderFunction} from "@remix-run/node";
 import stylesIndex from "./auth.css";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faFacebookF, faGoogle} from "@fortawesome/free-brands-svg-icons";
+import {faGoogle} from "@fortawesome/free-brands-svg-icons";
 import {faEnvelope} from "@fortawesome/free-solid-svg-icons";
-import {useActionData, useParams} from "react-router";
+import {useActionData} from "react-router";
 import {Form, useFetcher, useSearchParams} from "@remix-run/react";
-import {
-  FacebookAuthProvider,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut
-} from "@firebase/auth";
+import {GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut} from "@firebase/auth";
 import {firebaseAuth} from "~/services/auth/firebase-app";
 import {useRef, useState} from "react";
 import {sessionLogin} from "~/fb.sessions.server";
@@ -58,7 +52,6 @@ export default function Index() {
     signInWithPopup(firebaseAuth, provider)
       .then(async (res) => {
         const idToken = await res.user.getIdToken();
-        // const idToken = await getIdToken(res.user);
         fetcher.submit(
           {
             idToken: idToken,
@@ -69,26 +62,6 @@ export default function Index() {
       })
       .catch((err) => {
         console.log("signInWithGoogle", err);
-      });
-  };
-
-  const signInWithFacebook = async () => {
-    await signOut(firebaseAuth);
-    const provider = new FacebookAuthProvider();
-    signInWithPopup(firebaseAuth, provider)
-      .then(async (res) => {
-        const idToken = await res.user.getIdToken();
-        // const idToken = await getIdToken(res.user);
-        fetcher.submit(
-          {
-            idToken: idToken,
-            provider: res.user.providerId
-          },
-          { method: "post" }
-        );
-      })
-      .catch((err) => {
-        console.log("signInWithFacebook", err);
       });
   };
 
@@ -150,14 +123,6 @@ export default function Index() {
 
           <ul className="auth-methods">
             <li className="py-1">
-              <button className="btn btn-facebook w-100"
-                type="button"
-                onClick={() => signInWithFacebook()}>
-                <FontAwesomeIcon icon={faFacebookF}/>
-                <span> Sign in with Facebook</span>
-              </button>
-            </li>
-            <li className="py-1">
               <button className="btn btn-google w-100 py-2"
                   type="button"
                   onClick={() => signInWithGoogle()}>
@@ -169,7 +134,7 @@ export default function Index() {
           <hr/>
           <div>
             <div className="form-floating">
-              <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" ref={emailRef}/>
+              <input type="email" className="form-control" name="floatingInput" placeholder="name@example.com" ref={emailRef}/>
               <label htmlFor="floatingInput">Email address</label>
             </div>
             <div className="form-floating">

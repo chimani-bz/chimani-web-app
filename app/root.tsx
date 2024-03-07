@@ -1,7 +1,6 @@
 import {cssBundleHref} from "@remix-run/css-bundle";
 import type {LinksFunction} from "@remix-run/node";
 import {Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration,} from "@remix-run/react";
-import {AuthProvider} from "~/services/auth/authContext";
 
 
 export const links: LinksFunction = () => [
@@ -48,9 +47,7 @@ export default function App() {
         <meta name="msapplication-square310x310logo" content="https://chimani-website.s3.amazonaws.com/images/touch/ms-tile-largetile.png" />
       </head>
       <body>
-        <AuthProvider>
-          <Outlet />
-        </AuthProvider>
+        <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

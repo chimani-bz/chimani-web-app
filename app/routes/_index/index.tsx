@@ -3,7 +3,7 @@ import stylesBasic from "./basic.css";
 import "./footer.css";
 import "./index.css";
 import React from "react";
-import {getChimaniUser, getFirebaseSessionIfExists} from "~/fb.sessions.server";
+import {getChimaniUser} from "~/fb.sessions.server";
 import {ChimaniUser, isAnonymousUser, isAuthenticatedUser} from "../../services/auth/models/ChimaniUser";
 import {useLoaderData} from "react-router";
 import {Form, Link} from "@remix-run/react";
@@ -29,7 +29,7 @@ export const meta: MetaFunction = () => {
 };
 
 const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
-  if(isAuthenticatedUser(user)){
+  if(isAuthenticatedUser(user) && user.has_active_subscription){
     return (
       <section className="subscription-plans-wrap container-wrap">
         <div className="subscription-plans container-fluid">

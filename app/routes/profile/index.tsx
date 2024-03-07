@@ -1,33 +1,9 @@
 import {json, Outlet} from "@remix-run/react";
-import {useAuth} from "~/services/auth/authContext";
-import {isAuthenticatedUser} from "~/services/auth/models/ChimaniUser";
-import {getFirebaseIdTokenFromRemixSession, getRemixSession, isSessionValid} from "~/fb.sessions.server";
+import {getFirebaseIdTokenFromRemixSession, isSessionValid} from "~/fb.sessions.server";
 import {useLoaderData} from "react-router";
-import {getSession} from "@remix-run/dev/dist/vite/profiler";
 
 export async function loader({ request }) {
   const { decodedClaims, error } = await isSessionValid(request, "/login");
-  //
-  // const COLLECTION_NAME = "tryreactfire";
-  // const PROJECT_ID = decodedClaims.aud;
-  //
-  // const response = await fetch(
-  //   `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${COLLECTION_NAME}`
-  // );
-  // const { documents } = await response.json();
-  //
-  // console.log("documents", JSON.stringify(documents));
-  // const responseData = [];
-  // documents.forEach((doc) => {
-  //   Object.keys(doc.fields).map((k) =>
-  //     responseData.push({
-  //       id: doc.name.substring(doc.name.lastIndexOf("/") + 1),
-  //       createTime: doc.createTime,
-  //       updateTime: doc.updateTime,
-  //       [k]: Object.values(doc.fields[k])[0],
-  //     })
-  //   );
-  // });
   const userProfile = await (async () => {
     console.log('INSIDE userProfile')
     if(error){
