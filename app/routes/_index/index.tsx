@@ -1,12 +1,16 @@
-import type {LinksFunction, LoaderFunction, MetaFunction} from "@remix-run/node";
+import type {ActionFunction, LinksFunction, LoaderFunction, MetaFunction} from "@remix-run/node";
 import stylesBasic from "./basic.css";
 import "./footer.css";
 import "./index.css";
-import React from "react";
+import React, {useEffect} from "react";
 import {ChimaniUser, isAnonymousUser, isAuthenticatedUser} from "../../services/auth/models/ChimaniUser";
 import {useLoaderData} from "react-router";
-import {Form, Link} from "@remix-run/react";
-import {getChimaniUser} from "~/services/auth/session.server";
+import {Form, Link, useFetcher} from "@remix-run/react";
+import {getChimaniUser, isSessionValid} from "~/services/auth/session.server";
+import {stripeServer} from "~/services/stripe/stripe.server";
+import {HOST_URL} from "~/services/config";
+import {loadStripe} from "@stripe/stripe-js";
+import {Elements, useStripe} from "@stripe/react-stripe-js";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesBasic},
@@ -14,12 +18,53 @@ export const links: LinksFunction = () => [
 ];
 
 // use loader to check for existing session, if found, send the user to the blogs site
+type LoaderFunctionType = {
+  user: ChimaniUser
+  STRIPE_PUBLISHABLE_KEY: string
+  STRIPE_CUSTOMER_PORTAL_URL: string
+}
 export const  loader:LoaderFunction = async ({ request }) => {
   const user = await getChimaniUser(request);
   return {
-    user: user
-  };
+    user: user,
+    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+    STRIPE_CUSTOMER_PORTAL_URL: process.env.STRIPE_CUSTOMER_PORTAL_URL,
+  } as LoaderFunctionType;
 }
+
+export const action:ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const planId = formData.get('planId')
+  const user  = await isSessionValid(request, '/auth?plan=annual');
+  const session = await stripeServer.checkout.sessions.create({
+    // TODO: `allow_promotion_codes` is underline for type mismatch.
+    //  Test if this field is having expected effect and is it necessary at all.
+    allow_promotion_codes: true,
+    mode: 'subscription',
+    payment_method_types: ['card'],
+    subscription_data: {
+      items: [
+        {
+          plan: planId
+        }
+      ]
+    },
+    success_url: `${HOST_URL}/purchase_successful`,
+    cancel_url: `${HOST_URL}/about_perks`,
+    metadata: {
+      'firebase_id': user.firebaseUid,
+      'email': user.email,
+      // TODO: displayName is not getting Firebase user name, instead it is blank.
+      //  Research if this field is needed, and if it is research how to get user's name.
+      'description': user.displayName,
+      'subscription_plan': 'annual',
+      'source_host_url': HOST_URL,
+    }
+  });
+  return {
+    checkoutSessionId: session.id
+  }
+};
 
 export const meta: MetaFunction = () => {
   return [
@@ -29,6 +74,21 @@ export const meta: MetaFunction = () => {
 };
 
 const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
+  const { STRIPE_CUSTOMER_PORTAL_URL } = useLoaderData() as LoaderFunctionType
+  const stripeClient = useStripe();
+  const fetcher = useFetcher();
+  useEffect(() => {
+    if(fetcher.state === 'idle' && fetcher.data){
+      stripeClient.redirectToCheckout({
+        sessionId: fetcher.data.checkoutSessionId
+      }).then(function (result) {
+        // If `redirectToCheckout` fails due to a browser or network
+        // error, display the localized error message to your customer
+        // using `result.error.message`.
+      });
+    }
+  }, [fetcher]);
+
   if(isAuthenticatedUser(user) && user.hasActiveSubscription){
     return (
       <section className="subscription-plans-wrap container-wrap">
@@ -48,35 +108,52 @@ const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
     )
   }
 
+  const onSubscriptionClick = (planId: string) => {
+    fetcher.submit(
+      {
+        planId: planId
+      },
+      { method: "post" }
+    )
+  }
+
   return (
     <section className="subscription-plans-wrap container-wrap">
       <div className="subscription-plans container-fluid">
         <div className="subscription-plans__space">
-          <div className="subscription-plans__option subscription-plans__option--left">
+          <Form method="post" className="subscription-plans__option subscription-plans__option--left">
             <p className="price price--left">$29.99<span className="subscript">/ year</span></p>
             <p className="billing-note">(billed annually)</p>
-            <Link
-              to={`/auth?plan=annual`}
+            <button type="button"
+              onClick={() => onSubscriptionClick('plan_EBTcTjTD1NCG4j')}
               className="subscription-plans__option_button noselect">
                 <span className="subscription-plans__option_button__text">
                   SIGN UP <br className="break"/>
                   FOR YEAR
                 </span>
-            </Link>
-          </div>
+            </button>
+          </Form>
 
-          <div className="subscription-plans__option subscription-plans__option--right">
+          <Form method="post" className="subscription-plans__option subscription-plans__option--right">
             <p className="price price--right">$99.99<span className="subscript">/ lifetime</span></p>
             <p className="billing-note">(billed once)</p>
-            <Link
-              to={`/auth?plan=lifetime`}
-              className="subscription-plans__option_button noselect">
+            <button type="button"
+                onClick={() => onSubscriptionClick('plan_EBTcTjTD1NCG4j')}
+                className="subscription-plans__option_button noselect">
                 <span className="subscription-plans__option_button__text">
                   SIGN UP <br className="break"/>
                   FOR LIFETIME
                 </span>
-            </Link>
-          </div>
+            </button>
+          </Form>
+        </div>
+        <div>
+          {isAuthenticatedUser(user) && user.stripeCustomerId &&
+            <a href={STRIPE_CUSTOMER_PORTAL_URL} target="_blank"
+              className="button button-primary">
+              Manage Subscription
+            </a>
+          }
         </div>
       </div>
     </section>
@@ -84,10 +161,13 @@ const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
 }
 
 export default function Index() {
-  const {user} = useLoaderData() as {user:ChimaniUser};
+  const {user, STRIPE_PUBLISHABLE_KEY} = useLoaderData() as LoaderFunctionType;
+  const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY)
 
   return (
-    <>
+    <Elements
+      stripe={stripePromise}
+    >
       <Form
         method="post"
         action="/logout"
@@ -162,7 +242,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-
 
       <section className="container-wrap">
         <div className="container-fluid container-wrap container-fluid--has-image_left">
@@ -326,6 +405,6 @@ export default function Index() {
           </ul>
       </footer>
     </div>
-    </>
+    </Elements>
   );
 };

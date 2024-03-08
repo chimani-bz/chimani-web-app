@@ -1,11 +1,17 @@
-import type {ActionFunction, LinksFunction, LoaderFunction} from "@remix-run/node";
+import type {ActionFunction, LinksFunction, LoaderFunction, MetaFunction} from "@remix-run/node";
 import stylesIndex from "./auth.css";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faGoogle} from "@fortawesome/free-brands-svg-icons";
 import {faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import {useActionData} from "react-router";
-import {Form, useFetcher, useSearchParams} from "@remix-run/react";
-import {GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut} from "@firebase/auth";
+import {Form, Link, useFetcher, useSearchParams} from "@remix-run/react";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut
+} from "@firebase/auth";
 import {firebaseAuth} from "~/services/auth/firebase-app.client";
 import {useRef, useState} from "react";
 import {sessionLogin} from "~/services/auth/session.server";
@@ -37,11 +43,24 @@ export const action:ActionFunction = async ({ request }) => {
   }
 };
 
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Chimani Login" },
+    { name: "description", content: "Chimani Login Page" },
+  ];
+};
+
+enum FormMode {
+  Login = 'login',
+  Register = 'register'
+}
+
 export default function Index() {
   const [searchParams, setSearchParams] = useSearchParams();
   const actionData = useActionData();
   const fetcher = useFetcher<ActionDto>();
   const [validationMessage, setValidationMessage] = useState('')
+  const [formMode, setFormMode] = useState(FormMode.Login)
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -79,7 +98,6 @@ export default function Index() {
       );
 
       if (authResp.user) {
-        console.log('INSIDE if authResp.user')
         const idToken = await authResp.user.getIdToken();
         fetcher.submit(
           {
@@ -90,7 +108,41 @@ export default function Index() {
         );
       }
     } catch (err) {
-      console.log("signInWithEmail", err);
+      console.log("signInWithEmail ERROR:", err);
+      if(!err.code) {
+        if(err.code === 'auth/invalid-credential') {
+          setValidationMessage("Invalid credentials. Please check your email and password are correct.")
+        } else if(err.code === 'auth/too-many-requests') {
+          setValidationMessage("Your login was disabled because you had too many unsuccessful attempts to log in. To continue please reset your password or try again a bit later.")
+        }
+      }
+    }
+  };
+  const registerWithEmail = async () => {
+    if(emailRef.current === null || passwordRef.current === null){
+      return;
+    }
+
+    try {
+      await signOut(firebaseAuth);
+      const authResp = await createUserWithEmailAndPassword(
+        firebaseAuth,
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+
+      if (authResp.user) {
+        const idToken = await authResp.user.getIdToken();
+        fetcher.submit(
+          {
+            idToken: idToken,
+            provider: authResp.user.providerId
+          },
+          { method: "post" }
+        );
+      }
+    } catch (err) {
+      console.log("registerWithEmail ERROR:", err);
       if(!err.code) {
         if(err.code === 'auth/invalid-credential') {
           setValidationMessage("Invalid credentials. Please check your email and password are correct.")
@@ -132,24 +184,70 @@ export default function Index() {
             </li>
           </ul>
           <hr/>
-          <div>
-            <div className="form-floating">
-              <input type="email" className="form-control" name="floatingInput" placeholder="name@example.com" ref={emailRef}/>
-              <label htmlFor="floatingInput">Email address</label>
+          { formMode === FormMode.Login &&
+            <div>
+              <div className="form-floating">
+                <input type="email" className="form-control" name="floatingInput" placeholder="name@example.com"
+                       ref={emailRef}/>
+                <label htmlFor="floatingInput">Email address</label>
+              </div>
+              <div className="form-floating">
+                <input type="password" className="form-control" id="floatingPassword" placeholder="Password"
+                       ref={passwordRef}/>
+                <label htmlFor="floatingPassword">Password</label>
+              </div>
+              <div className="py-1">
+                <button className="btn btn-primary w-100 py-2"
+                        type="button"
+                        onClick={() => signInWithEmail()}>
+                  <FontAwesomeIcon icon={faEnvelope}/>
+                  <span>Sign in with email</span>
+                </button>
+              </div>
+              <div className="py-1">
+                <button className="btn btn-link w-100"
+                        type="button"
+                        onClick={() => setFormMode(FormMode.Register)}>
+                  <span>Register in with email</span>
+                </button>
+                <Link to="/reset-password" className="btn btn-link w-100">
+                  <span>Forgot password?</span>
+                </Link>
+              </div>
             </div>
-            <div className="form-floating">
-              <input type="password" className="form-control" id="floatingPassword" placeholder="Password" ref={passwordRef}/>
-              <label htmlFor="floatingPassword">Password</label>
+          }
+          {formMode === FormMode.Register &&
+            <div>
+              <div className="form-floating">
+                <input type="email" className="form-control" name="floatingInput" placeholder="name@example.com"
+                       ref={emailRef}/>
+                <label htmlFor="floatingInput">Email address</label>
+              </div>
+              <div className="form-floating">
+                <input type="password" className="form-control" id="floatingPassword" placeholder="Password"
+                       ref={passwordRef}/>
+                <label htmlFor="floatingPassword">Set Password</label>
+              </div>
+              <div className="py-1">
+                <button className="btn btn-primary w-100 py-2"
+                        type="button"
+                        onClick={() => registerWithEmail()}>
+                  <span>Register with email</span>
+                </button>
+              </div>
+              <div className="py-1">
+                <button className="btn btn-link w-100"
+                        type="button"
+                        onClick={() => setFormMode(FormMode.Login)}>
+                  <span>Sign in with email</span>
+                </button>
+                <Link to="/reset-password" className="btn btn-link w-100">
+                  <span>Forgot password?</span>
+                </Link>
+              </div>
             </div>
-            <div className="py-1">
-              <button className="btn btn-primary w-100 py-2"
-                      type="button"
-              onClick={() => signInWithEmail()}>
-                <FontAwesomeIcon icon={faEnvelope}/>
-                <span>Sign in with email</span>
-              </button>
-            </div>
-          </div>
+          }
+
 
           <div className="errors">
             {actionData?.error ? actionData?.error?.message : null}
@@ -157,7 +255,7 @@ export default function Index() {
           </div>
 
           <div className="footer">
-            <div className="mt-5 text-body-secondary text-center">
+          <div className="mt-5 text-body-secondary text-center">
               ©2010–{new Date().getFullYear()}<br/>
               Chimani, Inc.
             </div>

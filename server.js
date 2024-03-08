@@ -8,6 +8,7 @@ import compression from "compression";
 import express from "express";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
+import registerApiRoutes from "./server/webhook.js"
 
 sourceMapSupport.install({
   retrieveSourceMap: function (source) {
@@ -56,6 +57,8 @@ app.use(
 app.use(express.static("public", { maxAge: "1h" }));
 
 app.use(morgan("tiny"));
+
+registerApiRoutes(app)
 
 app.all("*", remixHandler);
 

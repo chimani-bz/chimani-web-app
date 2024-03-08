@@ -11,12 +11,16 @@ export const links: LinksFunction = () => [
 type LoaderType = {
   ENV: {
     FIREBASE_CLIENT_CONFIG: string
+    STRIPE_PUBLISHABLE_KEY: string
+    STRIPE_CUSTOMER_PORTAL_URL: string
   }
 }
 export const loader:LoaderFunction = () => {
   return json({
     ENV: {
       FIREBASE_CLIENT_CONFIG: process.env.FIREBASE_CLIENT_CONFIG,
+      STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+      STRIPE_CUSTOMER_PORTAL_URL: process.env.STRIPE_CUSTOMER_PORTAL_URL,
     },
   });
 }

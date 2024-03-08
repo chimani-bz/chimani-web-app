@@ -2,6 +2,8 @@ import {createCookieSessionStorage, redirect} from "@remix-run/node";
 import admin from 'firebase-admin';
 import {UserPersona} from "~/services/auth/models/BaseUser";
 import * as process from "process";
+import {AuthenticatedUser} from "~/services/auth/models/AuthenticatedUser";
+import {getDatabase} from "firebase-admin/database";
 
 const FIREBASE_USER_SESSION_TOKEN_NAME = 'firebase_user_session_token'
 if(!process.env.FIREBASE_SERVICE_ACCOUNT_KEY){
@@ -17,6 +19,7 @@ if (!admin.apps.length) {
     credential: admin.credential.cert(FIREBASE_SERVICE_ACCOUNT_KEY),
   });
 }
+const firebaseRealtimeDatabase = getDatabase();
 
 /**
  * setup the session cookie to be used for firebase
@@ -38,6 +41,21 @@ const { getSession, commitSession, destroySession } =
     },
   });
 
+export const getStripeCustomerIdForUser = async (firebaseUid) => {
+  const refPath = `perksMembership/${firebaseUid}`
+  const dbRef = firebaseRealtimeDatabase.ref(refPath)
+  const snapshot = await dbRef.get()
+  if(!snapshot.exists()){
+    return null
+  }
+  const membership = snapshot.val()
+  const customerId = membership['stripeCustomerId']
+  if(!customerId) {
+    return null
+  }
+  return customerId
+}
+
 /**
  * checks that the current session is a valid session be getting the token
  * from the session cookie and validating it with firebase
@@ -54,11 +72,15 @@ export const isSessionValid = async (request, redirectTo) => {
     const decodedClaims = await admin
       .auth()
       .verifySessionCookie(idToken, true /** checkRevoked */);
+    const stripeCustomerId = await getStripeCustomerIdForUser(decodedClaims.uid)
     return {
-      success: true,
       persona: UserPersona.Authenticated,
-      decodedClaims
-    };
+      firebaseUid: decodedClaims.uid,
+      email: decodedClaims.email,
+      displayName: decodedClaims['name'] || 'Missing name',
+      hasActiveSubscription: false,
+      stripeCustomerId: stripeCustomerId,
+    } as AuthenticatedUser;
   } catch (error) {
     // Session cookie is unavailable or invalid. Force user to login.
     // return { error: error?.message };
@@ -85,10 +107,14 @@ export const getChimaniUser = async (request) => {
     const decodedClaims = await admin
        .auth()
        .verifySessionCookie(token, true /** checkRevoked */);
+    const stripeCustomerId = await getStripeCustomerIdForUser(decodedClaims.uid)
     return {
       persona: UserPersona.Authenticated,
       firebaseUid: decodedClaims.uid,
-      hasActiveSubscription: false
+      email: decodedClaims.email,
+      displayName: decodedClaims['name'] || 'Missing name',
+      hasActiveSubscription: false,
+      stripeCustomerId: stripeCustomerId,
     }
   } catch (error) {
     return {
