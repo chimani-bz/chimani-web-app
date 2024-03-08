@@ -1,6 +1,71 @@
-import type { MetaFunction } from "@remix-run/node";
-import "./basic.css";
+import type {ActionFunction, LinksFunction, LoaderFunction, MetaFunction} from "@remix-run/node";
+import stylesBasic from "./basic.css";
+import "./footer.css";
 import "./index.css";
+import React, {useEffect} from "react";
+import {ChimaniUser, isAnonymousUser, isAuthenticatedUser} from "../../services/auth/models/ChimaniUser";
+import {useLoaderData} from "react-router";
+import {Form, Link, useFetcher} from "@remix-run/react";
+import {getChimaniUser, isSessionValid} from "~/services/auth/session.server";
+import {stripeServer} from "~/services/stripe/stripe.server";
+import {HOST_URL} from "~/services/config";
+import {loadStripe} from "@stripe/stripe-js";
+import {Elements, useStripe} from "@stripe/react-stripe-js";
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesBasic},
+  { rel: "stylesheet", href: '/type/fontello.css'},
+];
+
+// use loader to check for existing session, if found, send the user to the blogs site
+type LoaderFunctionType = {
+  user: ChimaniUser
+  STRIPE_PUBLISHABLE_KEY: string
+  STRIPE_CUSTOMER_PORTAL_URL: string
+}
+export const  loader:LoaderFunction = async ({ request }) => {
+  const user = await getChimaniUser(request);
+  return {
+    user: user,
+    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+    STRIPE_CUSTOMER_PORTAL_URL: process.env.STRIPE_CUSTOMER_PORTAL_URL,
+  } as LoaderFunctionType;
+}
+
+export const action:ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const planId = formData.get('planId')
+  const user  = await isSessionValid(request, '/auth?plan=annual');
+  const session = await stripeServer.checkout.sessions.create({
+    // TODO: `allow_promotion_codes` is underline for type mismatch.
+    //  Test if this field is having expected effect and is it necessary at all.
+    allow_promotion_codes: true,
+    mode: 'subscription',
+    payment_method_types: ['card'],
+    subscription_data: {
+      items: [
+        {
+          plan: planId
+        }
+      ]
+    },
+    success_url: `${HOST_URL}/purchase_successful`,
+    cancel_url: `${HOST_URL}/about_perks`,
+    metadata: {
+      'firebase_id': user.firebaseUid,
+      'email': user.email,
+      // TODO: displayName is not getting Firebase user name, instead it is blank.
+      //  Research if this field is needed, and if it is research how to get user's name.
+      'description': user.displayName,
+      'subscription_plan': 'annual',
+      'source_host_url': HOST_URL,
+    }
+  });
+  return {
+    checkoutSessionId: session.id
+  }
+};
+
 export const meta: MetaFunction = () => {
   return [
     { title: "Chimani Perks Subscription" },
@@ -8,9 +73,122 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Index() {
+const SubscriptionSection:React.FC<{ user: ChimaniUser }> = ({user}) => {
+  const { STRIPE_CUSTOMER_PORTAL_URL } = useLoaderData() as LoaderFunctionType
+  const stripeClient = useStripe();
+  const fetcher = useFetcher();
+  useEffect(() => {
+    if(fetcher.state === 'idle' && fetcher.data){
+      stripeClient.redirectToCheckout({
+        sessionId: fetcher.data.checkoutSessionId
+      }).then(function (result) {
+        // If `redirectToCheckout` fails due to a browser or network
+        // error, display the localized error message to your customer
+        // using `result.error.message`.
+      });
+    }
+  }, [fetcher]);
+
+  if(isAuthenticatedUser(user) && user.hasActiveSubscription){
+    return (
+      <section className="subscription-plans-wrap container-wrap">
+        <div className="subscription-plans container-fluid">
+          <div className="subscription-plans__space">
+            <div className="subscription-plans__option subscription-plans__option--left">
+              <h4 style={{fontSize: '18px', fontWeight: '700'}}>You have an active subscription.</h4>
+              <Link to={'/'} className="subscription-plans__option_button noselect">
+                <span className="subscription-plans__option_button__text">
+                  Manage subscription
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const onSubscriptionClick = (planId: string) => {
+    fetcher.submit(
+      {
+        planId: planId
+      },
+      { method: "post" }
+    )
+  }
+
   return (
-    <div className="about-perks">
+    <section className="subscription-plans-wrap container-wrap">
+      <div className="subscription-plans container-fluid">
+        <div className="subscription-plans__space">
+          <Form method="post" className="subscription-plans__option subscription-plans__option--left">
+            <p className="price price--left">$29.99<span className="subscript">/ year</span></p>
+            <p className="billing-note">(billed annually)</p>
+            <button type="button"
+              onClick={() => onSubscriptionClick('plan_EBTcTjTD1NCG4j')}
+              className="subscription-plans__option_button noselect">
+                <span className="subscription-plans__option_button__text">
+                  SIGN UP <br className="break"/>
+                  FOR YEAR
+                </span>
+            </button>
+          </Form>
+
+          <Form method="post" className="subscription-plans__option subscription-plans__option--right">
+            <p className="price price--right">$99.99<span className="subscript">/ lifetime</span></p>
+            <p className="billing-note">(billed once)</p>
+            <button type="button"
+                onClick={() => onSubscriptionClick('plan_EBTcTjTD1NCG4j')}
+                className="subscription-plans__option_button noselect">
+                <span className="subscription-plans__option_button__text">
+                  SIGN UP <br className="break"/>
+                  FOR LIFETIME
+                </span>
+            </button>
+          </Form>
+        </div>
+        <div>
+          {isAuthenticatedUser(user) && user.stripeCustomerId &&
+            <a href={STRIPE_CUSTOMER_PORTAL_URL} target="_blank"
+              className="button button-primary">
+              Manage Subscription
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default function Index() {
+  const {user, STRIPE_PUBLISHABLE_KEY} = useLoaderData() as LoaderFunctionType;
+  const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY)
+
+  return (
+    <Elements
+      stripe={stripePromise}
+    >
+      <Form
+        method="post"
+        action="/logout"
+        style={{display:'flex', flexDirection: 'row', justifyContent: 'center'}}>
+        <b>Used for dev: </b>
+        Persona: {user.persona}
+        {isAnonymousUser(user) &&
+          <Link
+            to={`/auth`} style={{padding: '5px', height: '30px'}}>
+            Login
+          </Link>
+        }
+        {isAuthenticatedUser(user) &&
+          <button type="submit"
+            style={{padding: '5px', height: '30px'}}>
+            Logout
+          </button>
+        }
+      </Form>
+      <div className="about-perks">
+
       <section className="hero-wrap container-wrap">
         <div className="hero container-fluid">
           <div className="first-message">
@@ -64,7 +242,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-
 
       <section className="container-wrap">
         <div className="container-fluid container-wrap container-fluid--has-image_left">
@@ -197,12 +374,37 @@ export default function Index() {
             </ul>
           </div>
         </div>
+
       </section>
+
+      <SubscriptionSection user={user}/>
 
       <div className="footer-division-line-wrap">
         <hr className="footer-division-line"/>
       </div>
 
+      <footer className="about-perk-footer">
+          <p>©<span id="copyright">2010-2022</span> Chimani, Inc. All rights reserved. |&nbsp;
+            <a href="https://www.chimani.com/privacy.html">Privacy Policy</a> | &nbsp;
+            <a href="https://www.chimani.com/termsofservice.html">Terms of Service</a> |&nbsp;
+            <a href="mailto:info@chimani.com">info (at) chimani.com</a>
+          </p>
+          <ul className="social gray">
+            <li>
+              <a href="https://twitter.com/Chimani" title="Chimani on Twitter"><i className="icon-s-twitter"></i></a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/chimani" title="Chimani on Facebook"><i className="icon-s-facebook"></i></a>
+            </li>
+            <li>
+              <a href="https://instagram.com/chimani/" title="Chimani on Instagram"><i className="icon-s-instagram"></i></a>
+            </li>
+            <li>
+              <a href="#" data-toggle="modal" data-target="#subscribeModal" className="newsletter-link visible-sm" title="Subscribe to our newsletter" target="_blank"><i className="icon-newspaper"></i></a>
+            </li>
+          </ul>
+      </footer>
     </div>
+    </Elements>
   );
 };

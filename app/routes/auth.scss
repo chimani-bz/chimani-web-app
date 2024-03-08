@@ -1,0 +1,83 @@
+// Variable overrides second
+$primary: rgb(94, 67, 52);
+$enable-shadows: true;
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+html,
+body {
+  height: 100%;
+  background-color: #FFFBF0;
+}
+
+.main-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.logo__wrap{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.form-signin-wrapper {
+  max-width: 400px;
+  padding: 1rem;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.logo-image {
+  max-width: 100px;
+}
+.plan-name {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.auth-methods {
+  list-style: none;
+  padding: 0;
+  $facebook-color: #3B5998;
+  .btn-facebook {
+    color: white;
+    @include button-variant($facebook-color, darken($facebook-color, 7.5%), darken($facebook-color, 10%), lighten($facebook-color,5%), lighten($facebook-color, 10%), darken($facebook-color,30%));
+  }
+
+  $google-color: #dd4b39;
+  .btn-google {
+    color: white;
+    @include button-variant($google-color, darken($google-color, 7.5%), darken($google-color, 10%), lighten($google-color,5%), lighten($google-color, 10%), darken($google-color,30%));
+  }
+}
+
+.footer {
+  font-size: .8rem;
+  .footer-link {
+    &__list {
+      list-style: none;
+      padding: 0;
+      > li {
+        display: inline-block;
+        margin: .5rem;
+      }
+    }
+  }
+}
