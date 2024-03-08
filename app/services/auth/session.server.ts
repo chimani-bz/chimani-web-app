@@ -4,6 +4,7 @@ import {UserPersona} from "~/services/auth/models/BaseUser";
 import * as process from "process";
 import {AuthenticatedUser} from "~/services/auth/models/AuthenticatedUser";
 import {getDatabase} from "firebase-admin/database";
+import {hasUserPerksEntitlement} from "~/services/revenuecat/revenuecat.server";
 
 const FIREBASE_USER_SESSION_TOKEN_NAME = 'firebase_user_session_token'
 if(!process.env.FIREBASE_SERVICE_ACCOUNT_KEY){
@@ -35,9 +36,8 @@ const { getSession, commitSession, destroySession } =
       maxAge: 60 * 60 * 24 * 30,
       path: "/",
       sameSite: "lax",
-      // TODO: Get from env var.
       secrets: [process.env.SESSION_SECRET],
-      secure: !!process.env.SESSION_USE_TLS && process.env.SESSION_USE_TLS.toLowerCase() === 'true',
+      secure: process.env.SESSION_USE_TLS?.toLowerCase() === 'true',
     },
   });
 
@@ -73,13 +73,14 @@ export const isSessionValid = async (request, redirectTo) => {
       .auth()
       .verifySessionCookie(idToken, true /** checkRevoked */);
     const stripeCustomerId = await getStripeCustomerIdForUser(decodedClaims.uid)
+    const hasActiveSubscription = await hasUserPerksEntitlement(decodedClaims.uid)
     return {
       persona: UserPersona.Authenticated,
       firebaseUid: decodedClaims.uid,
       email: decodedClaims.email,
       displayName: decodedClaims['name'] || 'Missing name',
-      hasActiveSubscription: false,
-      stripeCustomerId: stripeCustomerId,
+      hasActiveSubscription,
+      stripeCustomerId,
     } as AuthenticatedUser;
   } catch (error) {
     // Session cookie is unavailable or invalid. Force user to login.
@@ -108,13 +109,14 @@ export const getChimaniUser = async (request) => {
        .auth()
        .verifySessionCookie(token, true /** checkRevoked */);
     const stripeCustomerId = await getStripeCustomerIdForUser(decodedClaims.uid)
+    const hasActiveSubscription = await hasUserPerksEntitlement(decodedClaims.uid)
     return {
       persona: UserPersona.Authenticated,
       firebaseUid: decodedClaims.uid,
       email: decodedClaims.email,
       displayName: decodedClaims['name'] || 'Missing name',
-      hasActiveSubscription: false,
-      stripeCustomerId: stripeCustomerId,
+      hasActiveSubscription,
+      stripeCustomerId,
     }
   } catch (error) {
     return {
